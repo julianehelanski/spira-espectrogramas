@@ -8,10 +8,12 @@ dataset público do projeto SPIRA (IME-USP / C4AI-USP).
 As figuras geradas correspondem às Figuras apresentadas na seção
 "A imagem do som: espectrogramas como inscrições" do Capítulo 4:
 
-    Fig. 1 — spira_controle_sem_legenda.png   (grupo controle, sem eixos)
-    Fig. 2 — spira_controle_com_eixos.png     (grupo controle, com eixos)
-    Fig. 3 — spira_paciente_sem_legenda.png   (grupo paciente, sem eixos)
-    Fig. 4 — spira_paciente_com_eixos.png     (grupo paciente, com eixos)
+    Fig. 1 — spira_waveform_controle.png         (grupo controle, forma de onda)
+    Fig. 2 — spira_waveform_paciente.png          (grupo paciente, forma de onda)
+    Fig. 3 — spira_controle_sem_legenda.png       (grupo controle, sem eixos)
+    Fig. 4 — spira_controle_com_eixos.png         (grupo controle, com eixos)
+    Fig. 5 — spira_paciente_sem_legenda.png        (grupo paciente, sem eixos)
+    Fig. 6 — spira_paciente_com_eixos.png          (grupo paciente, com eixos)
 
 Os parâmetros técnicos (sr=16000, n_mels=128, fmax=8000) reproduzem o padrão
 descrito nos artigos do projeto:
@@ -110,6 +112,38 @@ def carregar_audio(caminho: str) -> tuple[np.ndarray, int]:
     return y, sr
 
 
+def salvar_waveform(
+    y: np.ndarray,
+    sr: int,
+    caminho_saida: str,
+) -> None:
+    """
+    Gera a forma de onda (waveform) do sinal bruto sem eixos.
+
+    Representa o polo mais material da cadeia de referência circulante:
+    o sinal antes de qualquer transformação espectral. Cada valor em y
+    é uma amostra de pressão do ar em 1/16000 de segundo. Fundo preto
+    para consistência visual com os espectrogramas sem eixos.
+    """
+    times = np.linspace(0, len(y) / sr, num=len(y))
+    fig, ax = plt.subplots(figsize=(12, 3))
+    ax.plot(times, y, color="white", linewidth=0.3, alpha=0.85)
+    ax.set_axis_off()
+    # limites verticais levemente expandidos para evitar corte
+    margin = np.max(np.abs(y)) * 0.1
+    ax.set_ylim(-np.max(np.abs(y)) - margin, np.max(np.abs(y)) + margin)
+    plt.tight_layout(pad=0)
+    plt.savefig(
+        caminho_saida,
+        dpi=150,
+        bbox_inches="tight",
+        pad_inches=0,
+        facecolor="black",
+    )
+    plt.close()
+    print(f"  Salvo: {caminho_saida}")
+
+
 def calcular_espectrograma(y: np.ndarray, sr: int) -> np.ndarray:
     """Calcula o espectrograma mel em dB com os parâmetros SPIRA."""
     S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=N_MELS, fmax=FMAX)
@@ -190,7 +224,7 @@ def salvar_com_eixos(
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Gera os quatro espectrogramas mel do Capítulo 4 da dissertação "
+            "Gera os seis espectrogramas e formas de onda do Capítulo 4 da dissertação "
             "'A rede que Marcelo construiu' (Helanski, 2026), "
             "a partir de gravações do dataset público SPIRA."
         )
@@ -222,6 +256,13 @@ def main() -> None:
     # ── Grupo controle ────────────────────────────────────────────────────────
     print("\n[1/2] Grupo controle")
     y_c, sr_c = carregar_audio(args.controle)
+
+    salvar_waveform(
+        y_c,
+        sr_c,
+        caminho("spira_waveform_controle.png"),
+    )
+
     S_c = calcular_espectrograma(y_c, sr_c)
 
     salvar_sem_eixos(
@@ -239,6 +280,13 @@ def main() -> None:
     # ── Grupo paciente ────────────────────────────────────────────────────────
     print("\n[2/2] Grupo paciente")
     y_p, sr_p = carregar_audio(args.paciente)
+
+    salvar_waveform(
+        y_p,
+        sr_p,
+        caminho("spira_waveform_paciente.png"),
+    )
+
     S_p = calcular_espectrograma(y_p, sr_p)
 
     salvar_sem_eixos(
@@ -254,7 +302,7 @@ def main() -> None:
     )
 
     print(
-        f"\nConcluído. Quatro figuras salvas em: {os.path.abspath(args.saida)}"
+        f"\nConcluído. Seis figuras salvas em: {os.path.abspath(args.saida)}"
     )
     print(
         "Parâmetros: sr=16000 Hz | n_mels=128 | fmax=8000 Hz | cmap=magma"
