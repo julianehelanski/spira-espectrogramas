@@ -1,8 +1,6 @@
-# Espectrogramas SPIRA — material suplementar
+# gerar_espectrogramas_spira
 
-Script Python para geração dos quatro espectrogramas mel utilizados no Capítulo 4 da dissertação de doutorado **"A rede que Marcelo construiu"**, parte da tese *[título da tese]* (Helanski, 2026), Departamento de Antropologia, IFCH, Universidade Estadual de Campinas.
-
-As figuras documentam a operação que a cadeia de referência circulante realiza sobre o sinal acústico do projeto SPIRA: vozes coletadas em enfermaria de COVID-19 e por aplicativo web são convertidas em texturas bidimensionais que uma rede neural convolucional aprende a classificar como insuficiência respiratória presente ou ausente.
+Script de geração das formas de onda e espectrogramas mel utilizados no Capítulo 4 da dissertação **"A rede que Marcelo construiu"** (Helanski, 2026), a partir de gravações do dataset público do projeto SPIRA (IME-USP / C4AI-USP).
 
 ---
 
@@ -10,68 +8,78 @@ As figuras documentam a operação que a cadeia de referência circulante realiz
 
 | Arquivo | Descrição |
 |---|---|
+| `spira_waveform_controle.png` | Forma de onda bruta — grupo controle, sem eixos |
+| `spira_waveform_paciente.png` | Forma de onda bruta — grupo paciente, sem eixos |
 | `spira_controle_sem_legenda.png` | Espectrograma mel — grupo controle, sem eixos |
-| `spira_controle_com_eixos.png` | Espectrograma mel — grupo controle, com eixos |
-| `spira_paciente_sem_legenda.png` | Espectrograma mel — grupo paciente (IR), sem eixos |
-| `spira_paciente_com_eixos.png` | Espectrograma mel — grupo paciente (IR), com eixos |
+| `spira_controle_com_eixos.png` | Espectrograma mel — grupo controle, com eixos e barra de cor |
+| `spira_paciente_sem_legenda.png` | Espectrograma mel — grupo paciente, sem eixos |
+| `spira_paciente_com_eixos.png` | Espectrograma mel — grupo paciente, com eixos e barra de cor |
 
-Parâmetros técnicos: `sr=16000 Hz` | `n_mels=128` | `fmax=8000 Hz` | `cmap=magma`. Reproduzem o padrão descrito em Casanova Gris et al. (2021) e Gauy et al. (2024) — ver Referências.
-
----
-
-## Dataset
-
-As gravações de áudio utilizadas pertencem ao dataset público do projeto SPIRA (IME-USP / C4AI-USP), disponível sob licença **CC BY-SA 4.0**.
-
-- Repositório principal (código-fonte e dataset, ACL 2021): [github.com/SPIRA-COVID19/SPIRA-ACL2021](https://github.com/SPIRA-COVID19/SPIRA-ACL2021)
-- Organização geral do projeto: [github.com/spirabr](https://github.com/spirabr)
-- Áudios de fala (pacientes e controles): [Google Drive](https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view)
-- Ruídos de enfermaria hospitalar: [Google Drive](https://drive.google.com/file/d/1zNwkye2FhV5LOVh3OfdqgPKzmYS7LeCM/view)
-
-O dataset foi coletado de forma completamente anônima. Os arquivos `.wav` são identificados apenas por metadados neutros: sexo, faixa etária, saturação de oxigênio no sangue e uso de máscara. A anonimização foi condição de possibilidade da publicação e circulação dos dados como recurso aberto.
+Os pares sem eixos / com eixos reproduzem o gesto analítico de tornar visível a cadeia de transformação do sinal acústico em inscrição circulável, nos termos de Latour (2001).
 
 ---
 
-## Dependências
+## Parâmetros técnicos
+
+Reproduzem o padrão descrito nos artigos do projeto SPIRA:
+
+| Parâmetro | Valor |
+|---|---|
+| Taxa de amostragem (`sr`) | 16.000 Hz |
+| Coeficientes Mel (`n_mels`) | 128 |
+| Frequência máxima (`fmax`) | 8.000 Hz |
+| Colormap | `magma` |
+
+Referências:
+
+- Casanova Gris et al. (2021). Towards a COVID-19 respiratory insufficiency detection system based on speech. *Findings of ACL-IJCNLP 2021*, p. 617–628. Disponível em: https://aclanthology.org/2021.findings-acl.55. Acesso em: 13 mar. 2026.
+- Gauy et al. (2024). Discriminant analysis for respiratory insufficiency using deep learning models and transfer learning. *arXiv:2511.14939*. Disponível em: https://arxiv.org/abs/2511.14939. Acesso em: 13 mar. 2026.
+
+---
+
+## Dataset público SPIRA
+
+| Recurso | URL | Licença |
+|---|---|---|
+| Repositório principal (código e dataset, ACL 2021) | https://github.com/SPIRA-COVID19/SPIRA-ACL2021 | CC BY-SA 4.0 |
+| Organização geral do projeto | https://github.com/spirabr | — |
+| Áudios de fala (pacientes e controles) | https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view | CC BY-SA 4.0 |
+| Ruídos de enfermaria hospitalar | https://drive.google.com/file/d/1zNwkye2FhV5LOVh3OfdqgPKzmYS7LeCM/view | CC BY-SA 4.0 |
+
+O dataset não está incluído neste repositório. Para reproduzir as figuras, faça o download dos arquivos de áudio pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
+
+---
+
+## Instalação
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Ou individualmente:
-
-```bash
-pip install librosa matplotlib numpy
-```
+Versões mínimas testadas: Python 3.10, librosa 0.10, matplotlib 3.7, numpy 1.24.
 
 ---
 
 ## Uso
 
 ```bash
-# com os arquivos de áudio no diretório corrente
-python gerar_espectrogramas_spira.py
-
-# especificando caminhos e diretório de saída
 python gerar_espectrogramas_spira.py \
-    --controle dados/controle.wav \
-    --paciente dados/PTT-20200511-WA0018.wav \
+    --controle caminho/para/controle.wav \
+    --paciente caminho/para/PTT-20200511-WA0018.wav \
     --saida    figuras/cap.4/
 ```
 
+Se os argumentos forem omitidos, o script busca os arquivos no diretório corrente com os nomes padrão `spira_controle.wav` e `PTT-20200511-WA0018.wav`, e salva as figuras no diretório corrente.
+
 ---
 
-## Referências
+## Cadeia de transformação
 
-**Artigos do projeto SPIRA:**
+O script expõe as três etapas da cadeia de transformação do sinal acústico em inscrição:
 
-- Casanova Gris, E. et al. Towards a COVID-19 respiratory insufficiency detection system based on speech. *Findings of ACL-IJCNLP 2021*, p. 617–628. Disponível em: [aclanthology.org/2021.findings-acl.55](https://aclanthology.org/2021.findings-acl.55).
-
-- Gauy, M. V. et al. Discriminant analysis for respiratory insufficiency using deep learning models and transfer learning. *Intelligence-Based Medicine*, 2024. Disponível em: [arxiv.org/abs/2511.14939](https://arxiv.org/abs/2511.14939).
-
-**Dissertação que utiliza este material:**
-
-- Helanski, J. *[Título da tese]*. Tese (Doutorado em Antropologia) — IFCH, Universidade Estadual de Campinas, Campinas, 2026.
+1. **Forma de onda** (`salvar_waveform`): o sinal bruto como sequência de amostras de pressão do ar. Polo mais material da cadeia, antes de qualquer decomposição espectral.
+2. **Espectrograma mel sem eixos** (`salvar_sem_eixos`): a matriz bidimensional 128 × T visualizada como textura espectral, antes da nomeação das coordenadas.
+3. **Espectrograma mel com eixos** (`salvar_com_eixos`): o mesmo objeto com tempo (s), frequência (Mel) e amplitude (dB) nomeados, no estado em que pode circular entre laboratórios.
 
 ---
 
@@ -79,8 +87,22 @@ python gerar_espectrogramas_spira.py \
 
 Este script foi produzido com auxílio do modelo de linguagem Claude Sonnet 4.6 (Anthropic, 2025–2026) em sessão de trabalho conduzida em 12 de março de 2026. A interpretação analítica das imagens geradas é da pesquisadora.
 
+O uso do modelo de linguagem como ferramenta de pesquisa é discutido no Apêndice da dissertação ("Nota sobre o uso de modelo de linguagem como ferramenta de pesquisa"), onde a recursividade entre objeto de estudo e ferramenta metodológica é tratada como dado reflexivo do campo.
+
+---
+
+## Citação
+
+Se este script for utilizado em trabalhos acadêmicos, cite a dissertação de origem:
+
+> HELANSKI, Juliane. *A rede que Marcelo construiu*: etnografia do projeto SPIRA e do Centro de Inteligência Artificial da USP. Tese (Doutorado) — [Programa de Pós-Graduação], Universidade Estadual de Campinas, 2026.
+
+e o dataset público do SPIRA:
+
+> CASANOVA GRIS, Edresson et al. Towards a COVID-19 respiratory insufficiency detection system based on speech. In: *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*. Stroudsburg: ACL, 2021. p. 617–628.
+
 ---
 
 ## Licença
 
-O código deste repositório está disponível sob licença [MIT](LICENSE). As gravações de áudio utilizadas pertencem ao dataset SPIRA, disponível sob licença [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+O código deste repositório é disponibilizado sob licença MIT. As gravações do dataset SPIRA estão sob licença CC BY-SA 4.0 (ver links acima).
