@@ -1,6 +1,6 @@
 # gerar_espectrogramas_spira
 
-Script de geração das formas de onda e espectrogramas mel utilizados no Capítulo 4 da dissertação **"A rede que Marcelo construiu"** (Helanski, 2026), a partir de gravações do dataset público do projeto SPIRA (IME-USP / C4AI-USP).
+Script de geração das formas de onda, espectrogramas mel e diagrama de convolução CNN utilizados no Capítulo 4 da dissertação **"A rede que Marcelo construiu"** (Helanski, 2026), a partir de gravações do dataset público do projeto SPIRA (IME-USP / C4AI-USP).
 
 ---
 
@@ -14,8 +14,9 @@ Script de geração das formas de onda e espectrogramas mel utilizados no Capít
 | `spira_controle_com_eixos.png` | Espectrograma mel — grupo controle, com eixos e barra de cor |
 | `spira_paciente_sem_legenda.png` | Espectrograma mel — grupo paciente, sem eixos |
 | `spira_paciente_com_eixos.png` | Espectrograma mel — grupo paciente, com eixos e barra de cor |
+| `spira_cnn_diagrama.png` | Diagrama de convolução CNN — espectrograma mel do paciente, filtro 3×3 e mapa de ativação |
 
-Os pares sem eixos / com eixos reproduzem o gesto analítico de tornar visível a cadeia de transformação do sinal acústico em inscrição circulável, nos termos de Latour (2001).
+Os pares sem eixos / com eixos reproduzem o gesto analítico de tornar visível a cadeia de transformação do sinal acústico em inscrição circulável, nos termos de Latour (2001). O diagrama CNN torna visível a operação que o algoritmo realiza sobre essa inscrição: a varredura do filtro convolucional sobre a imagem do som.
 
 ---
 
@@ -34,6 +35,7 @@ Referências:
 
 - Casanova Gris et al. (2021). Towards a COVID-19 respiratory insufficiency detection system based on speech. *Findings of ACL-IJCNLP 2021*, p. 617–628. Disponível em: https://aclanthology.org/2021.findings-acl.55. Acesso em: 13 mar. 2026.
 - Gauy et al. (2024). Discriminant analysis for respiratory insufficiency using deep learning models and transfer learning. *arXiv:2511.14939*. Disponível em: https://arxiv.org/abs/2511.14939. Acesso em: 13 mar. 2026.
+- Younesi, A. et al. (2024). A comprehensive survey of convolutions in deep learning: applications, challenges, and future trends. *arXiv:2402.15490*. Disponível em: https://arxiv.org/abs/2402.15490. Acesso em: 17 mar. 2026.
 
 ---
 
@@ -56,17 +58,23 @@ O dataset não está incluído neste repositório. Para reproduzir as figuras, f
 pip install -r requirements.txt
 ```
 
-Versões mínimas testadas: Python 3.10, librosa 0.10, matplotlib 3.7, numpy 1.24.
+Versões mínimas testadas: Python 3.10, librosa 0.10, matplotlib 3.7, numpy 1.24, scipy 1.10.
 
 ---
 
 ## Uso
 
 ```bash
+# gera todas as figuras (formas de onda, espectrogramas e diagrama CNN)
 python gerar_espectrogramas_spira.py \
     --controle caminho/para/controle.wav \
     --paciente caminho/para/PTT-20200511-WA0018.wav \
     --saida    figuras/cap.4/
+```
+
+```bash
+# gera apenas o diagrama CNN, com espectrograma simulado (sem arquivos .wav)
+python gerar_espectrogramas_spira.py --apenas-cnn --saida figuras/cap.4/
 ```
 
 Se os argumentos forem omitidos, o script busca os arquivos no diretório corrente com os nomes padrão `spira_controle.wav` e `PTT-20200511-WA0018.wav`, e salva as figuras no diretório corrente.
@@ -75,11 +83,12 @@ Se os argumentos forem omitidos, o script busca os arquivos no diretório corren
 
 ## Cadeia de transformação
 
-O script expõe as três etapas da cadeia de transformação do sinal acústico em inscrição:
+O script expõe as quatro etapas da cadeia de transformação do sinal acústico em inscrição e classificação:
 
 1. **Forma de onda** (`salvar_waveform`): o sinal bruto como sequência de amostras de pressão do ar. Polo mais material da cadeia, antes de qualquer decomposição espectral.
 2. **Espectrograma mel sem eixos** (`salvar_sem_eixos`): a matriz bidimensional 128 × T visualizada como textura espectral, antes da nomeação das coordenadas.
 3. **Espectrograma mel com eixos** (`salvar_com_eixos`): o mesmo objeto com tempo (s), frequência (Mel) e amplitude (dB) nomeados, no estado em que pode circular entre laboratórios.
+4. **Diagrama CNN** (`gerar_diagrama_cnn`): três painéis em sequência — espectrograma mel do paciente com a janela do filtro 3×3 demarcada sobre uma região de pausa respiratória; filtro com pesos aprendidos; mapa de ativação resultante, com as regiões de pausa destacadas. Quando um arquivo `.wav` de paciente é fornecido, as pausas são detectadas automaticamente a partir da energia espectral no interior da fala (excluídos os 15 primeiros e últimos frames), selecionando os três centros de grupo com menor energia. Quando nenhum arquivo é fornecido (`--apenas-cnn`), o espectrograma é simulado com os parâmetros técnicos do projeto.
 
 ---
 
