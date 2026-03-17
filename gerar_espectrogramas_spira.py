@@ -14,6 +14,7 @@ As figuras geradas correspondem às Figuras apresentadas na seção
     Fig. 4 — spira_controle_com_eixos.png         (grupo controle, com eixos)
     Fig. 5 — spira_paciente_sem_legenda.png        (grupo paciente, sem eixos)
     Fig. 6 — spira_paciente_com_eixos.png          (grupo paciente, com eixos)
+    Fig. 7 — spira_cnn_diagrama.png               (diagrama de convolução CNN)
 
 Os parâmetros técnicos (sr=16000, n_mels=128, fmax=8000) reproduzem o padrão
 descrito nos artigos do projeto:
@@ -45,7 +46,7 @@ Ruídos de enfermaria hospitalar via Google Drive:
 ─────────────────────────────────────────────────────────────────────────────
 Dependências
 ─────────────────────────────────────────────────────────────────────────────
-    pip install librosa matplotlib numpy
+    pip install librosa matplotlib numpy scipy
 
 ─────────────────────────────────────────────────────────────────────────────
 Uso
@@ -54,6 +55,9 @@ Uso
         --controle caminho/para/controle.wav \\
         --paciente caminho/para/PTT-20200511-WA0018.wav \\
         --saida    figuras/cap.4/
+
+    Para gerar apenas o diagrama CNN (sem arquivos de áudio):
+        python gerar_espectrogramas_spira.py --apenas-cnn --saida figuras/cap.4/
 
     Se os argumentos forem omitidos, o script busca os arquivos no diretório
     corrente com os nomes padrão informados abaixo.
@@ -73,8 +77,10 @@ import sys
 import librosa
 import librosa.display
 import matplotlib
+import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.ndimage import gaussian_filter
 
 # Fonte sem serifa para compatibilidade com LaTeX (sans-serif)
 matplotlib.rcParams["font.family"] = "sans-serif"
@@ -95,7 +101,7 @@ SAIDA_DEFAULT    = "."
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Funções auxiliares
+# Funções auxiliares — espectrogramas e formas de onda
 # ─────────────────────────────────────────────────────────────────────────────
 
 def carregar_audio(caminho: str) -> tuple[np.ndarray, int]:
@@ -129,7 +135,6 @@ def salvar_waveform(
     fig, ax = plt.subplots(figsize=(12, 3))
     ax.plot(times, y, color="white", linewidth=0.3, alpha=0.85)
     ax.set_axis_off()
-    # limites verticais levemente expandidos para evitar corte
     margin = np.max(np.abs(y)) * 0.1
     ax.set_ylim(-np.max(np.abs(y)) - margin, np.max(np.abs(y)) + margin)
     plt.tight_layout(pad=0)
@@ -218,14 +223,274 @@ def salvar_com_eixos(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Diagrama CNN — convolução sobre o espectrograma mel
+# ─────────────────────────────────────────────────────────────────────────────
+
+def gerar_diagrama_cnn(
+    caminho_saida: str,
+    S_dB: np.ndarray | None = None,
+    sr: int = SR,
+) -> None:
+    """
+    Gera o diagrama de convolução CNN aplicada ao espectrograma mel do SPIRA.
+
+    O diagrama mostra três painéis em sequência:
+        Esquerda  — espectrograma mel (real se S_dB for fornecido,
+                    simulado caso contrário), com a janela 3x3 do filtro
+                    destacada sobre uma região de pausa respiratória.
+        Centro    — filtro (kernel) 3x3 com pesos aprendidos.
+        Direita   — mapa de ativação resultante, com regiões de pausa
+                    respiratória em destaque.
+
+    Se S_dB for None, o espectrograma é simulado com os parâmetros SPIRA
+    (sr=16000, n_mels=128, fmax=8000), reproduzindo as características
+    acústicas descritas nos artigos do projeto: energia concentrada nas
+    baixas frequências e colapsos abruptos de amplitude nas pausas
+    respiratórias.
+
+    Parâmetros
+    ----------
+    caminho_saida : str
+        Caminho completo para o arquivo PNG de saída.
+    S_dB : np.ndarray ou None
+        Espectrograma mel em dB calculado por calcular_espectrograma().
+        Se None, um espectrograma simulado é gerado internamente.
+    sr : int
+        Taxa de amostragem em Hz (padrão: 16000).
+    margem : int
+        Número de frames excluídos do início e do fim da gravação na
+        detecção de pausas. Evita que silêncios de início e fim de
+        gravação sejam confundidos com pausas respiratórias no interior
+        da fala. Padrão: 15 frames (~0.1 s a 16 kHz com hop_length=512).
+    """
+    np.random.seed(42)
+
+    # ── Espectrograma: real ou simulado ──────────────────────────────────────
+    if S_dB is not None:
+        # usa o espectrograma real fornecido, limitado a 130 frames
+        spec_db = S_dB[:, :130] if S_dB.shape[1] > 130 else S_dB
+        T = spec_db.shape[1]
+        # normaliza para o intervalo esperado
+        spec_db = spec_db - spec_db.max()
+        # versão linear normalizada para o mapa de ativação
+        spec = np.power(10, spec_db / 20)
+        spec = (spec - spec.min()) / (spec.max() - spec.min() + 1e-8)
+        # detecta pausas no interior da fala:
+        # exclui os primeiros e últimos 15 frames (silêncios de início/fim)
+        # para capturar apenas as interrupções de fonação devidas à IR
+        margem = 15
+        energia = spec.sum(axis=0)
+        energia_interior = energia[margem:T - margem]
+        frames_interior  = np.arange(margem, T - margem)
+        limiar = np.percentile(energia_interior, 25)
+        candidatos = frames_interior[energia_interior < limiar]
+        # agrupa frames contíguos e seleciona o centro de cada grupo
+        grupos, grupo_atual = [], [candidatos[0]]
+        for f in candidatos[1:]:
+            if f - grupo_atual[-1] <= 2:
+                grupo_atual.append(f)
+            else:
+                grupos.append(grupo_atual)
+                grupo_atual = [f]
+        grupos.append(grupo_atual)
+        centros = [int(np.median(g)) for g in grupos]
+        # seleciona os 3 centros com menor energia (pausas mais expressivas)
+        pause_marks     = sorted(sorted(centros, key=lambda c: energia[c])[:3])
+        pause_positions = list(candidatos)
+    else:
+        # espectrograma simulado com parâmetros SPIRA
+        T = 130
+        spec = np.zeros((N_MELS, T))
+        for i in range(N_MELS):
+            freq_weight = np.exp(-i / 30)
+            spec[i] = np.random.rand(T) * freq_weight * 0.6
+        for band, strength, width in [(10, 0.9, 8), (25, 0.7, 6), (45, 0.5, 5)]:
+            for t in range(T):
+                spec[band - width:band + width, t] += (
+                    strength * np.random.rand() * 0.8
+                )
+        pause_positions = [30, 31, 32, 33, 65, 66, 67, 95, 96]
+        for p in pause_positions:
+            if p < T:
+                spec[:, p] *= 0.08
+        spec[80:, :] += np.random.rand(48, T) * 0.15
+        spec = np.clip(spec, 0, 1)
+        spec_db = 20 * np.log10(spec + 1e-6)
+        spec_db = spec_db - spec_db.max()
+        pause_marks = [30, 65, 95]
+
+    # ── Layout ───────────────────────────────────────────────────────────────
+    bg        = "white"
+    txt_color = "#222222"
+    accent    = "#1a6faf"
+    pause_color = "#c0392b"
+
+    fig = plt.figure(figsize=(16, 7), facecolor=bg)
+    gs = gridspec.GridSpec(
+        1, 5,
+        width_ratios=[6, 0.5, 2, 0.5, 4],
+        wspace=0.08,
+        left=0.04, right=0.97, top=0.88, bottom=0.12,
+    )
+    ax_spec = fig.add_subplot(gs[0])
+    ax_arr1 = fig.add_subplot(gs[1])
+    ax_filt = fig.add_subplot(gs[2])
+    ax_arr2 = fig.add_subplot(gs[3])
+    ax_feat = fig.add_subplot(gs[4])
+
+    for ax in [ax_arr1, ax_arr2]:
+        ax.set_visible(False)
+    for ax in [ax_spec, ax_filt, ax_feat]:
+        ax.set_facecolor(bg)
+
+    # ── Painel 1: espectrograma ───────────────────────────────────────────────
+    ax_spec.imshow(
+        spec_db, aspect="auto", origin="lower",
+        cmap=CMAP, interpolation="bilinear",
+    )
+
+    # janela do filtro destacada sobre região de pausa
+    fw, fh = 12, 18
+    fx = pause_marks[0] - fw // 2 if pause_marks else 28
+    fy = 16
+    rect = plt.Rectangle(
+        (fx, fy), fw, fh,
+        linewidth=2.5, edgecolor=accent, facecolor="none",
+        linestyle="--", zorder=5,
+    )
+    ax_spec.add_patch(rect)
+
+    ax_spec.set_xticks([0, T // 4, T // 2, 3 * T // 4, T - 1])
+    ax_spec.set_xticklabels(
+        ["0", "0.25s", "0.5s", "0.75s", "1.0s"],
+        color=txt_color, fontsize=9,
+    )
+    ax_spec.set_yticks([0, 32, 64, 96, 127])
+    ax_spec.set_yticklabels(
+        ["0", "2k", "4k", "6k", "8k Hz"],
+        color=txt_color, fontsize=9,
+    )
+    ax_spec.tick_params(colors=txt_color, length=3)
+    for spine in ax_spec.spines.values():
+        spine.set_edgecolor("#bbbbbb")
+
+    ax_spec.set_title(
+        "espectrograma mel — entrada\n(paciente com IR, SPIRA)",
+        color=txt_color, fontsize=10, pad=6,
+    )
+    ax_spec.annotate(
+        "janela\n3×3",
+        xy=(fx + fw / 2, fy + fh + 2),
+        xytext=(fx + fw / 2 + 20, fy + fh + 18),
+        color=accent, fontsize=8,
+        arrowprops=dict(arrowstyle="->", color=accent, lw=1.5),
+        ha="center",
+    )
+    for p in pause_marks:
+        ax_spec.axvline(x=p, color=pause_color, lw=1.2, alpha=0.8, linestyle=":")
+    if pause_marks:
+        ax_spec.text(
+            pause_marks[0] + 2, 115,
+            "pausas\nrespiratórias",
+            color=pause_color, fontsize=8, ha="left",
+        )
+
+    # ── Setas ────────────────────────────────────────────────────────────────
+    fig.text(0.395, 0.50, "⟶", color=accent, fontsize=28,
+             va="center", ha="center")
+    fig.text(0.395, 0.38, "convolução\n3×3", color="#555555",
+             fontsize=8, va="center", ha="center")
+    fig.text(0.685, 0.50, "⟶", color=accent, fontsize=28,
+             va="center", ha="center")
+    fig.text(0.685, 0.38, "mapa de\nativação", color="#555555",
+             fontsize=8, va="center", ha="center")
+
+    # ── Painel 2: filtro 3x3 ─────────────────────────────────────────────────
+    kernel = np.array([
+        [ 0.12, -0.08,  0.05],
+        [ 0.45,  0.82, -0.23],
+        [-0.11,  0.37,  0.19],
+    ])
+    ax_filt.imshow(kernel, cmap="RdBu_r", vmin=-1, vmax=1,
+                   aspect="equal", interpolation="nearest")
+    for i in range(3):
+        for j in range(3):
+            ax_filt.text(
+                j, i, f"{kernel[i, j]:.2f}",
+                ha="center", va="center",
+                color="white", fontsize=11, fontweight="bold",
+            )
+    ax_filt.set_xticks([])
+    ax_filt.set_yticks([])
+    for spine in ax_filt.spines.values():
+        spine.set_edgecolor(accent)
+        spine.set_linewidth(2)
+    ax_filt.set_title(
+        "filtro (kernel)\n3×3 — pesos aprendidos",
+        color=txt_color, fontsize=10, pad=6,
+    )
+
+    # ── Painel 3: mapa de ativação ────────────────────────────────────────────
+    feat_map = np.zeros((N_MELS, T))
+    for i in range(N_MELS):
+        freq_weight = np.exp(-i / 40)
+        feat_map[i] = np.abs(spec[i] - 0.3) * freq_weight
+    for p in pause_positions:
+        if p < T:
+            feat_map[8:35, max(0, p - 2):p + 3] += 0.6
+    feat_map = gaussian_filter(feat_map, sigma=1.5)
+    feat_map = np.clip(feat_map, 0, 1)
+
+    ax_feat.imshow(
+        feat_map, aspect="auto", origin="lower",
+        cmap="viridis", interpolation="bilinear",
+    )
+    ax_feat.set_xticks([0, T // 4, T // 2, 3 * T // 4, T - 1])
+    ax_feat.set_xticklabels(
+        ["0", "0.25s", "0.5s", "0.75s", "1.0s"],
+        color=txt_color, fontsize=9,
+    )
+    ax_feat.set_yticks([0, 32, 64, 96, 127])
+    ax_feat.set_yticklabels(
+        ["0", "2k", "4k", "6k", "8k Hz"],
+        color=txt_color, fontsize=9,
+    )
+    ax_feat.tick_params(colors=txt_color, length=3)
+    for spine in ax_feat.spines.values():
+        spine.set_edgecolor("#bbbbbb")
+    ax_feat.set_title(
+        "mapa de ativação — padrões detectados\n(regiões de pausa destacadas)",
+        color=txt_color, fontsize=10, pad=6,
+    )
+    for p in pause_marks:
+        ax_feat.axvline(x=p, color=pause_color, lw=1.2, alpha=0.8, linestyle=":")
+
+    # ── Título geral ──────────────────────────────────────────────────────────
+    fig.suptitle(
+        "Convolução aplicada ao espectrograma mel do SPIRA:\n"
+        "o filtro desliza sobre a imagem do som e produz um mapa de ativação",
+        color=txt_color, fontsize=11, y=0.97,
+    )
+
+    plt.savefig(
+        caminho_saida,
+        dpi=200,
+        bbox_inches="tight",
+        facecolor=bg,
+    )
+    plt.close()
+    print(f"  Salvo: {caminho_saida}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Gera os seis espectrogramas e formas de onda do Capítulo 4 da dissertação "
-            "'A rede que Marcelo construiu' (Helanski, 2026), "
+            "Gera os espectrogramas, formas de onda e diagrama CNN do Capítulo 4 "
+            "da dissertação 'A rede que Marcelo construiu' (Helanski, 2026), "
             "a partir de gravações do dataset público SPIRA."
         )
     )
@@ -246,6 +511,14 @@ def main() -> None:
         default=SAIDA_DEFAULT,
         help=f"Diretório de saída para as figuras (padrão: {SAIDA_DEFAULT})",
     )
+    parser.add_argument(
+        "--apenas-cnn",
+        action="store_true",
+        help=(
+            "Gera apenas o diagrama CNN (spira_cnn_diagrama.png) "
+            "com espectrograma simulado, sem necessidade de arquivos .wav."
+        ),
+    )
     args = parser.parse_args()
 
     os.makedirs(args.saida, exist_ok=True)
@@ -253,56 +526,53 @@ def main() -> None:
     def caminho(nome: str) -> str:
         return os.path.join(args.saida, nome)
 
+    # ── Modo apenas-cnn ───────────────────────────────────────────────────────
+    if args.apenas_cnn:
+        print("\n[CNN] Diagrama de convolução (espectrograma simulado)")
+        gerar_diagrama_cnn(caminho("spira_cnn_diagrama.png"))
+        print(f"\nConcluído. Figura salva em: {os.path.abspath(args.saida)}")
+        return
+
     # ── Grupo controle ────────────────────────────────────────────────────────
-    print("\n[1/2] Grupo controle")
+    print("\n[1/3] Grupo controle")
     y_c, sr_c = carregar_audio(args.controle)
 
-    salvar_waveform(
-        y_c,
-        sr_c,
-        caminho("spira_waveform_controle.png"),
-    )
+    salvar_waveform(y_c, sr_c, caminho("spira_waveform_controle.png"))
 
     S_c = calcular_espectrograma(y_c, sr_c)
 
-    salvar_sem_eixos(
-        S_c,
-        sr_c,
-        caminho("spira_controle_sem_legenda.png"),
-    )
+    salvar_sem_eixos(S_c, sr_c, caminho("spira_controle_sem_legenda.png"))
     salvar_com_eixos(
-        S_c,
-        sr_c,
+        S_c, sr_c,
         caminho("spira_controle_com_eixos.png"),
         titulo="Espectrograma Mel — grupo controle | 128 coeficientes, 16 kHz",
     )
 
     # ── Grupo paciente ────────────────────────────────────────────────────────
-    print("\n[2/2] Grupo paciente")
+    print("\n[2/3] Grupo paciente")
     y_p, sr_p = carregar_audio(args.paciente)
 
-    salvar_waveform(
-        y_p,
-        sr_p,
-        caminho("spira_waveform_paciente.png"),
-    )
+    salvar_waveform(y_p, sr_p, caminho("spira_waveform_paciente.png"))
 
     S_p = calcular_espectrograma(y_p, sr_p)
 
-    salvar_sem_eixos(
-        S_p,
-        sr_p,
-        caminho("spira_paciente_sem_legenda.png"),
-    )
+    salvar_sem_eixos(S_p, sr_p, caminho("spira_paciente_sem_legenda.png"))
     salvar_com_eixos(
-        S_p,
-        sr_p,
+        S_p, sr_p,
         caminho("spira_paciente_com_eixos.png"),
         titulo="Espectrograma Mel — grupo paciente (IR) | 128 coeficientes, 16 kHz",
     )
 
+    # ── Diagrama CNN (com espectrograma real do paciente) ─────────────────────
+    print("\n[3/3] Diagrama CNN")
+    gerar_diagrama_cnn(
+        caminho("spira_cnn_diagrama.png"),
+        S_dB=S_p,
+        sr=sr_p,
+    )
+
     print(
-        f"\nConcluído. Seis figuras salvas em: {os.path.abspath(args.saida)}"
+        f"\nConcluído. Sete figuras salvas em: {os.path.abspath(args.saida)}"
     )
     print(
         "Parâmetros: sr=16000 Hz | n_mels=128 | fmax=8000 Hz | cmap=magma"
