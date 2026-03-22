@@ -15,6 +15,7 @@ As figuras geradas correspondem às Figuras apresentadas na seção
     Fig. 5 — spira_paciente_sem_legenda.png        (grupo paciente, sem eixos)
     Fig. 6 — spira_paciente_com_eixos.png          (grupo paciente, com eixos)
     Fig. 7 — spira_cnn_diagrama.png               (diagrama de convolução CNN)
+    Fig. 8 — spira_comparacao_linear_log.png      (comparação linear × logarítmica)
 
 Os parâmetros técnicos (sr=16000, n_mels=128, fmax=8000) reproduzem o padrão
 descrito nos artigos do projeto:
@@ -222,6 +223,112 @@ def salvar_com_eixos(
     print(f"  Salvo: {caminho_saida}")
 
 
+def salvar_comparacao_linear_log(
+    y: np.ndarray,
+    sr: int,
+    caminho_saida: str,
+) -> None:
+    """
+    Gera figura de comparação lado a lado entre o espectrograma mel
+    em escala LINEAR (potência bruta) e em escala LOGARÍTMICA (dB),
+    ambos calculados a partir do mesmo sinal de áudio com os parâmetros SPIRA.
+
+    O painel esquerdo mostra o que o espectrograma pareceria sem a conversão
+    para decibéis: a energia das frequências baixas domina a escala de cor
+    e esmaga as variações nas frequências médias e altas.
+
+    O painel direito mostra o espectrograma que efetivamente entra no
+    classificador do SPIRA: a conversão logarítmica redistribui os valores
+    de modo proporcional à percepção auditiva humana, tornando visíveis
+    as diferenças nas faixas superiores.
+
+    Parâmetros
+    ----------
+    y : np.ndarray
+        Sinal de áudio carregado por librosa.load().
+    sr : int
+        Taxa de amostragem em Hz.
+    caminho_saida : str
+        Caminho completo para o arquivo PNG de saída.
+    """
+    # Potência bruta (escala linear — sem conversão para dB)
+    S_linear = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=N_MELS, fmax=FMAX)
+
+    # Espectrograma em dB (escala logarítmica — padrão SPIRA)
+    S_dB = librosa.power_to_db(S_linear, ref=np.max)
+
+    fig, axes = plt.subplots(1, 2, figsize=(18, 5))
+
+    # ── Painel esquerdo: escala linear ────────────────────────────────────────
+    ax_lin = axes[0]
+    img_lin = librosa.display.specshow(
+        S_linear,
+        sr=sr,
+        x_axis="time",
+        y_axis="mel",
+        fmax=FMAX,
+        cmap=CMAP,
+        ax=ax_lin,
+    )
+    fig.colorbar(img_lin, ax=ax_lin, format="%.2e")
+    ax_lin.set_xlabel("Tempo (s)", fontsize=11)
+    ax_lin.set_ylabel("Frequência (Mel)", fontsize=11)
+    ax_lin.set_title(
+        "Escala LINEAR (potência bruta)\nsem conversão para decibéis",
+        fontsize=11, pad=8,
+    )
+    ax_lin.annotate(
+        "energia das frequências baixas\ndomina e apaga o restante",
+        xy=(S_linear.shape[1] * 0.5, 10),
+        xytext=(S_linear.shape[1] * 0.5, 60),
+        color="white", fontsize=9, ha="center",
+        arrowprops=dict(arrowstyle="->", color="white", lw=1.5),
+    )
+
+    # ── Painel direito: escala logarítmica (dB) — padrão SPIRA ───────────────
+    ax_log = axes[1]
+    img_log = librosa.display.specshow(
+        S_dB,
+        sr=sr,
+        x_axis="time",
+        y_axis="mel",
+        fmax=FMAX,
+        cmap=CMAP,
+        ax=ax_log,
+    )
+    fig.colorbar(img_log, ax=ax_log, format="%+2.0f dB")
+    ax_log.set_xlabel("Tempo (s)", fontsize=11)
+    ax_log.set_ylabel("Frequência (Mel)", fontsize=11)
+    ax_log.set_title(
+        "Escala LOGARÍTMICA (decibéis) — padrão SPIRA\n"
+        "conversão: librosa.power_to_db(S, ref=np.max)",
+        fontsize=11, pad=8,
+    )
+    ax_log.annotate(
+        "diferenças nas frequências\nmédias e altas tornadas visíveis",
+        xy=(S_dB.shape[1] * 0.5, 80),
+        xytext=(S_dB.shape[1] * 0.5, 110),
+        color="white", fontsize=9, ha="center",
+        arrowprops=dict(arrowstyle="->", color="white", lw=1.5),
+    )
+
+    fig.suptitle(
+        "Comparação: escala linear × escala logarítmica\n"
+        "arquivo: PTT-20200511-WA0018.wav | paciente com IR | dataset SPIRA (CC BY-SA 4.0)",
+        fontsize=11, y=1.02,
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        caminho_saida,
+        dpi=150,
+        bbox_inches="tight",
+        facecolor="white",
+    )
+    plt.close()
+    print(f"  Salvo: {caminho_saida}")
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Diagrama CNN — convolução sobre o espectrograma mel
 # ─────────────────────────────────────────────────────────────────────────────
@@ -267,24 +374,17 @@ def gerar_diagrama_cnn(
 
     # ── Espectrograma: real ou simulado ──────────────────────────────────────
     if S_dB is not None:
-        # usa o espectrograma real fornecido, limitado a 130 frames
         spec_db = S_dB[:, :130] if S_dB.shape[1] > 130 else S_dB
         T = spec_db.shape[1]
-        # normaliza para o intervalo esperado
         spec_db = spec_db - spec_db.max()
-        # versão linear normalizada para o mapa de ativação
         spec = np.power(10, spec_db / 20)
         spec = (spec - spec.min()) / (spec.max() - spec.min() + 1e-8)
-        # detecta pausas no interior da fala:
-        # exclui os primeiros e últimos 15 frames (silêncios de início/fim)
-        # para capturar apenas as interrupções de fonação devidas à IR
         margem = 15
         energia = spec.sum(axis=0)
         energia_interior = energia[margem:T - margem]
         frames_interior  = np.arange(margem, T - margem)
         limiar = np.percentile(energia_interior, 25)
         candidatos = frames_interior[energia_interior < limiar]
-        # agrupa frames contíguos e seleciona o centro de cada grupo
         grupos, grupo_atual = [], [candidatos[0]]
         for f in candidatos[1:]:
             if f - grupo_atual[-1] <= 2:
@@ -294,11 +394,9 @@ def gerar_diagrama_cnn(
                 grupo_atual = [f]
         grupos.append(grupo_atual)
         centros = [int(np.median(g)) for g in grupos]
-        # seleciona os 3 centros com menor energia (pausas mais expressivas)
         pause_marks     = sorted(sorted(centros, key=lambda c: energia[c])[:3])
         pause_positions = list(candidatos)
     else:
-        # espectrograma simulado com parâmetros SPIRA
         T = 130
         spec = np.zeros((N_MELS, T))
         for i in range(N_MELS):
@@ -319,7 +417,6 @@ def gerar_diagrama_cnn(
         spec_db = spec_db - spec_db.max()
         pause_marks = [30, 65, 95]
 
-    # ── Layout ───────────────────────────────────────────────────────────────
     bg        = "white"
     txt_color = "#222222"
     accent    = "#1a6faf"
@@ -343,13 +440,11 @@ def gerar_diagrama_cnn(
     for ax in [ax_spec, ax_filt, ax_feat]:
         ax.set_facecolor(bg)
 
-    # ── Painel 1: espectrograma ───────────────────────────────────────────────
     ax_spec.imshow(
         spec_db, aspect="auto", origin="lower",
         cmap=CMAP, interpolation="bilinear",
     )
 
-    # janela do filtro destacada sobre região de pausa
     fw, fh = 12, 18
     fx = pause_marks[0] - fw // 2 if pause_marks else 28
     fy = 16
@@ -395,7 +490,6 @@ def gerar_diagrama_cnn(
             color=pause_color, fontsize=8, ha="left",
         )
 
-    # ── Setas ────────────────────────────────────────────────────────────────
     fig.text(0.395, 0.50, "⟶", color=accent, fontsize=28,
              va="center", ha="center")
     fig.text(0.395, 0.38, "convolução\n3×3", color="#555555",
@@ -405,7 +499,6 @@ def gerar_diagrama_cnn(
     fig.text(0.685, 0.38, "mapa de\nativação", color="#555555",
              fontsize=8, va="center", ha="center")
 
-    # ── Painel 2: filtro 3x3 ─────────────────────────────────────────────────
     kernel = np.array([
         [ 0.12, -0.08,  0.05],
         [ 0.45,  0.82, -0.23],
@@ -430,7 +523,6 @@ def gerar_diagrama_cnn(
         color=txt_color, fontsize=10, pad=6,
     )
 
-    # ── Painel 3: mapa de ativação ────────────────────────────────────────────
     feat_map = np.zeros((N_MELS, T))
     for i in range(N_MELS):
         freq_weight = np.exp(-i / 40)
@@ -465,7 +557,6 @@ def gerar_diagrama_cnn(
     for p in pause_marks:
         ax_feat.axvline(x=p, color=pause_color, lw=1.2, alpha=0.8, linestyle=":")
 
-    # ── Título geral ──────────────────────────────────────────────────────────
     fig.suptitle(
         "Convolução aplicada ao espectrograma mel do SPIRA:\n"
         "o filtro desliza sobre a imagem do som e produz um mapa de ativação",
@@ -534,7 +625,7 @@ def main() -> None:
         return
 
     # ── Grupo controle ────────────────────────────────────────────────────────
-    print("\n[1/3] Grupo controle")
+    print("\n[1/4] Grupo controle")
     y_c, sr_c = carregar_audio(args.controle)
 
     salvar_waveform(y_c, sr_c, caminho("spira_waveform_controle.png"))
@@ -549,7 +640,7 @@ def main() -> None:
     )
 
     # ── Grupo paciente ────────────────────────────────────────────────────────
-    print("\n[2/3] Grupo paciente")
+    print("\n[2/4] Grupo paciente")
     y_p, sr_p = carregar_audio(args.paciente)
 
     salvar_waveform(y_p, sr_p, caminho("spira_waveform_paciente.png"))
@@ -563,8 +654,15 @@ def main() -> None:
         titulo="Espectrograma Mel — grupo paciente (IR) | 128 coeficientes, 16 kHz",
     )
 
+    # ── Comparação linear × logarítmica (grupo paciente) ─────────────────────
+    print("\n[3/4] Comparação linear × logarítmica")
+    salvar_comparacao_linear_log(
+        y_p, sr_p,
+        caminho("spira_comparacao_linear_log.png"),
+    )
+
     # ── Diagrama CNN (com espectrograma real do paciente) ─────────────────────
-    print("\n[3/3] Diagrama CNN")
+    print("\n[4/4] Diagrama CNN")
     gerar_diagrama_cnn(
         caminho("spira_cnn_diagrama.png"),
         S_dB=S_p,
@@ -572,7 +670,7 @@ def main() -> None:
     )
 
     print(
-        f"\nConcluído. Sete figuras salvas em: {os.path.abspath(args.saida)}"
+        f"\nConcluído. Oito figuras salvas em: {os.path.abspath(args.saida)}"
     )
     print(
         "Parâmetros: sr=16000 Hz | n_mels=128 | fmax=8000 Hz | cmap=magma"
