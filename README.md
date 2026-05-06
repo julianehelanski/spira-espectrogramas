@@ -22,9 +22,9 @@ Os pares sem eixos / com eixos reproduzem o gesto analítico de tornar visível 
 
 ## Figuras geradas a partir de `AUD-20260506-WA0053.opus`
 
-Aplicando as mesmas funções e os mesmos parâmetros SPIRA a uma gravação adicional (63,14 s, áudio de WhatsApp em formato `.opus`, decodificado e reamostrado para 16 kHz pelo `librosa.load`), o repositório inclui três figuras que cobrem cada etapa da cadeia de transformação:
+Subprojeto em [`projeto-daniela-feriani/`](projeto-daniela-feriani/). Aplicando as mesmas funções e os mesmos parâmetros SPIRA a uma gravação adicional (63,14 s, áudio de WhatsApp em formato `.opus`, decodificado e reamostrado para 16 kHz pelo `librosa.load`), o repositório inclui três figuras que cobrem cada etapa da cadeia de transformação:
 
-### 1. `AUD-20260506-WA0053_waveform.png` — Forma de onda
+### 1. `projeto-daniela-feriani/AUD-20260506-WA0053_waveform.png` — Forma de onda
 
 **O que é.** Gráfico do sinal de áudio bruto: cada pixel horizontal corresponde a uma amostra de pressão do ar capturada pelo microfone (uma a cada 1/16.000 de segundo); o eixo vertical é a amplitude instantânea normalizada. Linha branca sobre fundo preto, sem eixos nem legenda.
 
@@ -32,7 +32,7 @@ Aplicando as mesmas funções e os mesmos parâmetros SPIRA a uma gravação adi
 
 **Como é gerada.** `salvar_waveform()` em `gerar_espectrogramas_spira.py:122`. Plot direto de `y` × tempo via `matplotlib`, com eixos desligados e fundo preto para uniformidade visual com os espectrogramas sem legenda.
 
-### 2. `AUD-20260506-WA0053_mel_sem_legenda.png` — Espectrograma mel sem eixos
+### 2. `projeto-daniela-feriani/AUD-20260506-WA0053_mel_sem_legenda.png` — Espectrograma mel sem eixos
 
 **O que é.** Imagem bidimensional 128 × T da matriz mel-espectral em decibéis, sem eixos, ticks nem barra de cor. Eixo horizontal: tempo (frames). Eixo vertical: 128 bandas perceptuais Mel entre 0 e 8.000 Hz. Cor (`magma`): energia em dB, do mais escuro (silêncio) ao mais claro (energia alta).
 
@@ -40,7 +40,7 @@ Aplicando as mesmas funções e os mesmos parâmetros SPIRA a uma gravação adi
 
 **Como é gerada.** `salvar_sem_eixos()` em `gerar_espectrogramas_spira.py:159`. Pipeline: `librosa.feature.melspectrogram(y, sr=16000, n_mels=128, fmax=8000)` → `librosa.power_to_db(S, ref=np.max)` → `librosa.display.specshow` com `x_axis=None, y_axis=None`.
 
-### 3. `AUD-20260506-WA0053_mel_com_eixos.png` — Espectrograma mel com eixos e barra de cor
+### 3. `projeto-daniela-feriani/AUD-20260506-WA0053_mel_com_eixos.png` — Espectrograma mel com eixos e barra de cor
 
 **O que é.** Mesma matriz da figura 2, mas com eixos calibrados — Tempo (s) no horizontal, Frequência (Mel) no vertical — e barra de cor lateral em decibéis (`+0 dB` no topo, energia máxima de referência; valores negativos indicando atenuação relativa). Fundo branco, título identificando arquivo e parâmetros.
 
@@ -57,11 +57,12 @@ from gerar_espectrogramas_spira import (
     carregar_audio, salvar_waveform, calcular_espectrograma,
     salvar_sem_eixos, salvar_com_eixos,
 )
-y, sr = carregar_audio('AUD-20260506-WA0053.opus')
-salvar_waveform(y, sr, 'AUD-20260506-WA0053_waveform.png')
+base = 'projeto-daniela-feriani/AUD-20260506-WA0053'
+y, sr = carregar_audio(f'{base}.opus')
+salvar_waveform(y, sr, f'{base}_waveform.png')
 S = calcular_espectrograma(y, sr)
-salvar_sem_eixos(S, sr, 'AUD-20260506-WA0053_mel_sem_legenda.png')
-salvar_com_eixos(S, sr, 'AUD-20260506-WA0053_mel_com_eixos.png',
+salvar_sem_eixos(S, sr, f'{base}_mel_sem_legenda.png')
+salvar_com_eixos(S, sr, f'{base}_mel_com_eixos.png',
                  titulo='Espectrograma Mel — AUD-20260506-WA0053 | 128 coeficientes, 16 kHz')
 "
 ```
