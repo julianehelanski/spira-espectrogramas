@@ -60,6 +60,9 @@ def renderizar_waveform_png(
     caminho_png: str,
     largura: int,
     altura: int,
+    cor: str = "white",
+    alpha: float = 0.9,
+    facecolor: str = "black",
 ) -> None:
     """Salva a forma de onda como PNG estático com dimensões exatas em pixels."""
     duracao = len(y) / sr
@@ -67,15 +70,15 @@ def renderizar_waveform_png(
 
     dpi = 100
     fig, ax = plt.subplots(figsize=(largura / dpi, altura / dpi), dpi=dpi)
-    fig.patch.set_facecolor("black")
-    ax.set_facecolor("black")
-    ax.plot(times, y, color="white", linewidth=0.4, alpha=0.9)
+    fig.patch.set_facecolor(facecolor)
+    ax.set_facecolor(facecolor)
+    ax.plot(times, y, color=cor, linewidth=0.5, alpha=alpha)
     margin = np.max(np.abs(y)) * 0.1
     ax.set_xlim(0, duracao)
     ax.set_ylim(-np.max(np.abs(y)) - margin, np.max(np.abs(y)) + margin)
     ax.set_axis_off()
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-    plt.savefig(caminho_png, dpi=dpi, facecolor="black", pad_inches=0)
+    plt.savefig(caminho_png, dpi=dpi, facecolor=facecolor, pad_inches=0)
     plt.close(fig)
 
 
@@ -93,44 +96,77 @@ def gerar_video(
     duracao = len(y) / sr
 
     with tempfile.TemporaryDirectory() as tmp:
-        png = os.path.join(tmp, "waveform.png")
-        print(f"\n[1/2] Renderizando imagem da forma de onda ({largura}x{altura})")
-        renderizar_waveform_png(y, sr, png, largura, altura)
+        # Renderiza duas versões da forma de onda:
+        #   - "dim"  : a parte ainda não tocada (esmaecida)
+        #   - "lit"  : a parte já tocada (cor viva)
+        # Cada frame do vídeo combina pixels das duas conforme o tempo:
+        # à esquerda do playhead, lit; à direita, dim.
+        png_dim = os.path.join(tmp, "waveform_dim.png")
+        png_lit = os.path.join(tmp, "waveform_lit.png")
 
-        # Barra vermelha de 3 px de largura como PNG separado para overlay
-        playhead_png = os.path.join(tmp, "playhead.png")
-        ph = np.zeros((altura, 3, 4), dtype=np.uint8)
-        ph[:, :, 0] = 0xE7  # R
-        ph[:, :, 1] = 0x4C  # G
-        ph[:, :, 2] = 0x3C  # B
-        ph[:, :, 3] = 230   # A (alpha)
-        plt.imsave(playhead_png, ph)
+        print(f"\n[1/3] Renderizando duas imagens da forma de onda ({largura}x{altura})")
+        renderizar_waveform_png(
+            y, sr, png_dim, largura, altura,
+            cor="#5d6a7a", alpha=0.6, facecolor="#0e1116",
+        )
+        renderizar_waveform_png(
+            y, sr, png_lit, largura, altura,
+            cor="#3aaed8", alpha=1.0, facecolor="#0e1116",
+        )
 
-        print(f"\n[2/2] Compondo vídeo com overlay do playhead e áudio (ffmpeg)")
-        # `overlay` reconhece `t` (timestamp) em expressões — diferente de
-        # `drawbox`, em que `t` colide com a opção `thickness`.
-        x_expr = f"(t/{duracao})*({largura}-3)"
-        filter_complex = f"[0:v][1:v]overlay=x={x_expr}:y=0[vout]"
+        dim = plt.imread(png_dim)
+        lit = plt.imread(png_lit)
+        # garantir uint8 RGB (matplotlib pode retornar float em [0,1] ou RGBA)
+        def para_rgb_uint8(arr: np.ndarray) -> np.ndarray:
+            if arr.dtype != np.uint8:
+                arr = (arr * 255).astype(np.uint8)
+            if arr.shape[2] == 4:
+                arr = arr[:, :, :3]
+            return np.ascontiguousarray(arr)
+        dim = para_rgb_uint8(dim)
+        lit = para_rgb_uint8(lit)
+        H, W, _ = dim.shape
+
+        n_frames = int(round(duracao * fps))
+        print(f"\n[2/3] Renderizando {n_frames} frames (numpy)")
+
+        cor_playhead = np.array([255, 255, 255], dtype=np.uint8)
 
         cmd = [
             "ffmpeg", "-y",
-            "-loop", "1", "-framerate", str(fps), "-t", f"{duracao}",
-            "-i", png,
-            "-loop", "1", "-framerate", str(fps), "-t", f"{duracao}",
-            "-i", playhead_png,
+            "-f", "rawvideo", "-pix_fmt", "rgb24",
+            "-s", f"{W}x{H}", "-framerate", str(fps),
+            "-i", "pipe:",
             "-i", audio_path,
-            "-filter_complex", filter_complex,
-            "-map", "[vout]",
-            "-map", "2:a",
             "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast",
             "-c:a", "aac", "-b:a", "192k",
             "-shortest",
             "-movflags", "+faststart",
             saida_path,
         ]
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        if result.returncode != 0:
-            sys.exit(f"[ERRO] ffmpeg falhou:\n{result.stderr}")
+
+        proc = subprocess.Popen(
+            cmd, stdin=subprocess.PIPE,
+            stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+        )
+
+        for i in range(n_frames):
+            x_t = int(round((i / n_frames) * W))
+            frame = dim.copy()
+            if x_t > 0:
+                frame[:, :x_t] = lit[:, :x_t]
+            # playhead 2 px branco
+            x0 = max(0, x_t - 1)
+            x1 = min(W, x_t + 1)
+            frame[:, x0:x1] = cor_playhead
+            proc.stdin.write(frame.tobytes())
+
+        proc.stdin.close()
+        rc = proc.wait()
+        if rc != 0:
+            err = proc.stderr.read().decode()
+            sys.exit(f"[ERRO] ffmpeg falhou:\n{err}")
+        print(f"\n[3/3] Vídeo finalizado")
 
     print(f"\nConcluído: {saida_path}")
 
