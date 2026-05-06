@@ -11,10 +11,12 @@ Subprojeto independente: análise visual de uma gravação de áudio em três re
 | `AUD-20260506-WA0053.opus` | áudio | Gravação original (63,14 s, `.opus` do WhatsApp) — formato compacto, mas não tocado pelo player do GitHub |
 | `AUD-20260506-WA0053.wav` | áudio | Mesma gravação convertida para WAV 16 kHz mono — **toca direto no navegador** ao clicar no arquivo no GitHub |
 | `gerar_imagens.py` | código | Script que gera as três imagens a partir do áudio |
-| `requirements.txt` | dependências | `librosa`, `matplotlib`, `numpy` |
+| `gerar_video.py` | código | Script que gera o vídeo MP4 da forma de onda com áudio sincronizado |
+| `requirements.txt` | dependências | `librosa`, `matplotlib`, `numpy` (+ `ffmpeg` no sistema para o vídeo) |
 | `AUD-20260506-WA0053_waveform.png` | imagem | Forma de onda bruta — linha branca sobre fundo preto, sem eixos |
 | `AUD-20260506-WA0053_mel_sem_legenda.png` | imagem | Espectrograma mel 128 × T em dB, sem eixos nem barra de cor |
 | `AUD-20260506-WA0053_mel_com_eixos.png` | imagem | Espectrograma mel com Tempo (s), Frequência (Mel) e barra de dB |
+| `AUD-20260506-WA0053_video.mp4` | vídeo | Forma de onda com playhead vermelho sincronizado ao áudio (63 s, 30 fps) |
 
 ---
 
@@ -50,6 +52,15 @@ python gerar_imagens.py --audio caminho/para/outro.opus --saida ./
 ```
 
 O script aceita qualquer formato suportado por `librosa.load` (wav, mp3, flac, opus, ogg, m4a, ...). Para `.opus` em particular, é necessário ter `ffmpeg` instalado no sistema.
+
+### Vídeo (forma de onda + áudio sincronizado)
+
+```bash
+# requer ffmpeg no PATH
+python gerar_video.py
+```
+
+Gera `AUD-20260506-WA0053_video.mp4`: a forma de onda inteira em fundo preto, com uma linha vertical vermelha (playhead) que percorre o tempo enquanto o áudio toca. 30 fps por padrão; ajustável com `--fps`.
 
 ---
 
