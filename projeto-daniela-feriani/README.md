@@ -16,7 +16,7 @@ Subprojeto independente: análise visual de uma gravação de áudio em três re
 | `AUD-20260506-WA0053_waveform.png` | imagem | Forma de onda bruta — linha branca sobre fundo preto, sem eixos |
 | `AUD-20260506-WA0053_mel_sem_legenda.png` | imagem | Espectrograma mel 128 × T em dB, sem eixos nem barra de cor |
 | `AUD-20260506-WA0053_mel_com_eixos.png` | imagem | Espectrograma mel com Tempo (s), Frequência (Mel) e barra de dB |
-| `AUD-20260506-WA0053_video.mp4` | vídeo | Forma de onda com playhead vermelho sincronizado ao áudio (63 s, 30 fps) |
+| `AUD-20260506-WA0053_video.mp4` | vídeo | Forma de onda estilo Wavepad: parte tocada em ciano, parte futura em cinza, playhead branco; áudio sincronizado (63 s, 30 fps) |
 
 ---
 
@@ -60,7 +60,7 @@ O script aceita qualquer formato suportado por `librosa.load` (wav, mp3, flac, o
 python gerar_video.py
 ```
 
-Gera `AUD-20260506-WA0053_video.mp4`: a forma de onda inteira em fundo preto, com uma linha vertical vermelha (playhead) que percorre o tempo enquanto o áudio toca. 30 fps por padrão; ajustável com `--fps`.
+Gera `AUD-20260506-WA0053_video.mp4` no estilo de editores de áudio (tipo Wavepad): a forma de onda completa em fundo azul-escuro, com a porção já tocada em ciano vivo e a porção futura em cinza esmaecido, separadas por um playhead branco que avança sincronizado ao som. 30 fps por padrão; ajustável com `--fps`. Renderização ~10 s para um áudio de 63 s.
 
 ---
 
