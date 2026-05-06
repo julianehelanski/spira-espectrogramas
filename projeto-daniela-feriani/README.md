@@ -8,7 +8,8 @@ Subprojeto independente: análise visual de uma gravação de áudio em três re
 
 | Arquivo | Tipo | Descrição |
 |---|---|---|
-| `AUD-20260506-WA0053.opus` | áudio | Gravação original (63,14 s, `.opus` do WhatsApp) — pode ser tocada em qualquer player que aceite Opus (VLC, ffplay, navegadores modernos) |
+| `AUD-20260506-WA0053.opus` | áudio | Gravação original (63,14 s, `.opus` do WhatsApp) — formato compacto, mas não tocado pelo player do GitHub |
+| `AUD-20260506-WA0053.wav` | áudio | Mesma gravação convertida para WAV 16 kHz mono — **toca direto no navegador** ao clicar no arquivo no GitHub |
 | `gerar_imagens.py` | código | Script que gera as três imagens a partir do áudio |
 | `requirements.txt` | dependências | `librosa`, `matplotlib`, `numpy` |
 | `AUD-20260506-WA0053_waveform.png` | imagem | Forma de onda bruta — linha branca sobre fundo preto, sem eixos |
@@ -65,9 +66,9 @@ O script aceita qualquer formato suportado por `librosa.load` (wav, mp3, flac, o
 
 ## Como ouvir o áudio
 
-O arquivo `AUD-20260506-WA0053.opus` está incluído no repositório e pode ser tocado:
+A gravação está incluída em dois formatos:
 
-- **No GitHub**: clique no arquivo na interface web — o navegador toca diretamente.
-- **VLC** (qualquer plataforma): `Arquivo → Abrir → AUD-20260506-WA0053.opus`.
-- **Linha de comando**: `ffplay AUD-20260506-WA0053.opus` ou `mpv AUD-20260506-WA0053.opus`.
-- **Em Python**: `import librosa; librosa.load("AUD-20260506-WA0053.opus", sr=16000)` retorna o sinal como `numpy.ndarray`.
+- **`AUD-20260506-WA0053.wav`** — para tocar **direto no GitHub** (clique no arquivo na interface web e o player nativo aparece). 16 kHz mono, ~2 MB.
+- **`AUD-20260506-WA0053.opus`** — formato original do WhatsApp, mais compacto (~130 KB), mas o GitHub **não** o toca inline. Use VLC, mpv, ffplay, ou abra com `librosa.load(...)` em Python.
+
+Os dois arquivos contêm o mesmo conteúdo sonoro; o `.wav` é apenas uma re-codificação do `.opus` em PCM 16 bit. As imagens deste projeto foram geradas a partir do `.opus`, mas o resultado é idêntico se `gerar_imagens.py` for chamado com `--audio AUD-20260506-WA0053.wav`.
