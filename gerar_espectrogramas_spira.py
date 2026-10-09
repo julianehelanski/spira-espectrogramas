@@ -97,8 +97,8 @@ FMAX = 8_000    # frequência máxima (Hz)
 CMAP = "viridis"  # colormap (padrão das figuras da tese desde jul. 2026; antes, magma)
 
 # Nomes de arquivo padrão
-CONTROLE_DEFAULT = "spira_controle.wav"
-PACIENTE_DEFAULT = "PTT-20200511-WA0018.wav"
+CONTROLE_DEFAULT = "audios/22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav"  # controle usado na tese desde jul. 2026
+PACIENTE_DEFAULT = "audios/PTT-20200511-WA0018.wav"
 SAIDA_DEFAULT    = "."
 
 

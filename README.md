@@ -51,7 +51,7 @@ Referências:
 | Áudios de fala (pacientes e controles) | https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view | CC BY-SA 4.0 |
 | Ruídos de enfermaria hospitalar | https://drive.google.com/file/d/1zNwkye2FhV5LOVh3OfdqgPKzmYS7LeCM/view | CC BY-SA 4.0 |
 
-O dataset não está incluído neste repositório. Para reproduzir as figuras, faça o download dos arquivos de áudio pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
+O dataset completo não está incluído neste repositório. A pasta `audios/` traz apenas as três gravações usadas nas figuras da tese, todas do dataset público: `22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` (controle usado na tese desde julho de 2026), `0a2d6271-846b-4157-a784-b5fa2d93d2f9_1.wav` (controle usado até julho de 2026) e `PTT-20200511-WA0018.wav` (paciente). Rodado na raiz sem argumentos, o script usa o controle atual e o paciente. Para outras gravações, faça o download pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
 
 ---
 
@@ -80,7 +80,7 @@ python gerar_espectrogramas_spira.py \
 python gerar_espectrogramas_spira.py --apenas-cnn --saida figuras/cap.4/
 ```
 
-Se os argumentos forem omitidos, o script busca os arquivos no diretório corrente com os nomes padrão `spira_controle.wav` e `PTT-20200511-WA0018.wav`, e salva as figuras no diretório corrente.
+Se os argumentos forem omitidos, o script busca os arquivos com os nomes padrão `audios/22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` e `audios/PTT-20200511-WA0018.wav` (caminhos relativos à raiz do repositório), e salva as figuras no diretório corrente.
 
 ---
 
