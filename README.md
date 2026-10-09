@@ -32,7 +32,7 @@ Reproduzem o padrão descrito nos artigos do projeto SPIRA:
 | Taxa de amostragem (`sr`) | 16.000 Hz |
 | Coeficientes Mel (`n_mels`) | 128 |
 | Frequência máxima (`fmax`) | 8.000 Hz |
-| Colormap | `magma` |
+| Colormap | `viridis` (forma de onda em gradiente por amplitude, fundo branco; até jul. 2026, `magma`) |
 
 Referências:
 

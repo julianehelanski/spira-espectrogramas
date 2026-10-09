@@ -80,6 +80,7 @@ import librosa.display
 import matplotlib
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
@@ -93,7 +94,7 @@ matplotlib.rcParams["font.sans-serif"] = ["DejaVu Sans"]
 SR = 16_000     # taxa de amostragem (Hz)
 N_MELS = 128    # número de coeficientes Mel
 FMAX = 8_000    # frequência máxima (Hz)
-CMAP = "magma"  # colormap (reproduz o padrão das figuras da dissertação)
+CMAP = "viridis"  # colormap (padrão das figuras da tese desde jul. 2026; antes, magma)
 
 # Nomes de arquivo padrão
 CONTROLE_DEFAULT = "spira_controle.wav"
@@ -129,22 +130,26 @@ def salvar_waveform(
 
     Representa o polo mais material da cadeia de referência circulante:
     o sinal antes de qualquer transformação espectral. Cada valor em y
-    é uma amostra de pressão do ar em 1/16000 de segundo. Fundo preto
-    para consistência visual com os espectrogramas sem eixos.
+    é uma amostra de pressão do ar em 1/16000 de segundo. Cada segmento
+    da linha recebe uma cor conforme a amplitude, mapeada para a paleta
+    CMAP (viridis), sobre fundo branco, como nas listagens do capítulo 4.
     """
     times = np.linspace(0, len(y) / sr, num=len(y))
-    fig, ax = plt.subplots(figsize=(12, 3))
-    ax.plot(times, y, color="white", linewidth=0.3, alpha=0.85)
+    pontos = np.array([times, y]).T.reshape(-1, 1, 2)
+    segmentos = np.concatenate([pontos[:-1], pontos[1:]], axis=1)
+    amplitude = np.abs(y) / np.abs(y).max()
+    fig, ax = plt.subplots(figsize=(12, 3), facecolor="white")
+    lc = LineCollection(segmentos, cmap=CMAP, array=amplitude[:-1], linewidth=0.5)
+    ax.add_collection(lc)
+    ax.set_xlim(times.min(), times.max())
+    ax.set_ylim(y.min() * 1.05, y.max() * 1.05)
     ax.set_axis_off()
-    margin = np.max(np.abs(y)) * 0.1
-    ax.set_ylim(-np.max(np.abs(y)) - margin, np.max(np.abs(y)) + margin)
-    plt.tight_layout(pad=0)
     plt.savefig(
         caminho_saida,
         dpi=150,
         bbox_inches="tight",
-        pad_inches=0,
-        facecolor="black",
+        pad_inches=0.02,
+        facecolor="white",
     )
     plt.close()
     print(f"  Salvo: {caminho_saida}")
@@ -636,7 +641,7 @@ def main() -> None:
     salvar_com_eixos(
         S_c, sr_c,
         caminho("spira_controle_com_eixos.png"),
-        titulo="Espectrograma Mel — grupo controle | 128 coeficientes, 16 kHz",
+        titulo="Espectrograma Mel — 128 coeficientes, 16kHz",
     )
 
     # ── Grupo paciente ────────────────────────────────────────────────────────
@@ -651,7 +656,7 @@ def main() -> None:
     salvar_com_eixos(
         S_p, sr_p,
         caminho("spira_paciente_com_eixos.png"),
-        titulo="Espectrograma Mel — grupo paciente (IR) | 128 coeficientes, 16 kHz",
+        titulo="Espectrograma Mel — paciente hospitalizado, 128 coeficientes, 16kHz",
     )
 
     # ── Comparação linear × logarítmica (grupo paciente) ─────────────────────
@@ -673,7 +678,7 @@ def main() -> None:
         f"\nConcluído. Oito figuras salvas em: {os.path.abspath(args.saida)}"
     )
     print(
-        "Parâmetros: sr=16000 Hz | n_mels=128 | fmax=8000 Hz | cmap=magma"
+        "Parâmetros: sr=16000 Hz | n_mels=128 | fmax=8000 Hz | cmap=viridis"
     )
 
 
