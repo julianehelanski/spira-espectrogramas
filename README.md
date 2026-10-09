@@ -51,7 +51,7 @@ Referências:
 | Áudios de fala (pacientes e controles) | https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view | CC BY-SA 4.0 |
 | Ruídos de enfermaria hospitalar | https://drive.google.com/file/d/1zNwkye2FhV5LOVh3OfdqgPKzmYS7LeCM/view | CC BY-SA 4.0 |
 
-O dataset completo não está incluído neste repositório. A pasta `audios/` traz apenas as três gravações usadas nas figuras da tese (procedência, durações e licença em [`audios/README.md`](audios/README.md)), todas do dataset público: `22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` (controle usado na tese desde julho de 2026), `0a2d6271-846b-4157-a784-b5fa2d93d2f9_1.wav` (controle usado até julho de 2026) e `PTT-20200511-WA0018.wav` (paciente). Rodado na raiz sem argumentos, o script usa o controle atual e o paciente. Para outras gravações, faça o download pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
+O dataset completo não está incluído neste repositório. As gravações também não são distribuídas aqui. A pasta `audios/` registra, em [`audios/README.md`](audios/README.md), os nomes, a procedência, as durações e a licença das três gravações usadas nas figuras da tese, todas do dataset público: `22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` (controle usado na tese desde julho de 2026), `0a2d6271-846b-4157-a784-b5fa2d93d2f9_1.wav` (controle usado até julho de 2026) e `PTT-20200511-WA0018.wav` (paciente). Depois de baixá-las e colocá-las em `audios/`, o script, rodado na raiz sem argumentos, usa o controle atual e o paciente. Para outras gravações, faça o download pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
 
 ---
 
