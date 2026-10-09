@@ -66,9 +66,9 @@ Uso
 ─────────────────────────────────────────────────────────────────────────────
 Nota metodológica
 ─────────────────────────────────────────────────────────────────────────────
-Este script foi produzido com auxílio do modelo de linguagem Claude Sonnet 4.6
-(Anthropic, 2025–2026) em sessão de trabalho conduzida em 12 de março de 2026.
-A interpretação analítica das imagens geradas é da pesquisadora.
+Fiz este script com o modelo de linguagem Claude Sonnet 4.6 (Anthropic) na
+sessão de trabalho de 12 de março de 2026, e o revisei depois com o Claude Code.
+A interpretação analítica das imagens geradas é minha.
 """
 
 import argparse
