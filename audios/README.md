@@ -1,6 +1,6 @@
 # Gravações de áudio
 
-Esta pasta guarda as três gravações do *dataset* público do projeto SPIRA que geram as figuras do capítulo 4 da tese (formas de onda e espectrogramas mel). O *dataset* completo não está no repositório.
+Esta pasta registra as três gravações do *dataset* público do projeto SPIRA que geram as figuras do capítulo 4 da tese (formas de onda e espectrogramas mel). Os arquivos de áudio não são distribuídos neste repositório: para reproduzir as figuras, obtenho-os (e quem quiser refazer o percurso os obtém) na fonte indicada abaixo e os coloco nesta pasta, com os nomes da tabela. O `.gitignore` impede que voltem a ser versionados.
 
 ## Procedência
 
@@ -8,7 +8,7 @@ Caminho de acesso:
 
 1. Repositório do projeto no GitHub: [`Spira-COVID19/SPIRA-ACL2021`](https://github.com/Spira-COVID19/SPIRA-ACL2021), seção *Datasets Download* do README.
 2. Link dessa seção para o **Speech COVID-19 Dataset**, no Google Drive: <https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view?usp=sharing>.
-3. Do arquivo baixado foram retiradas as gravações abaixo, sem alteração.
+3. Do pacote baixado, retiro as gravações abaixo pelo nome do arquivo, sem alteração.
 
 O capítulo 4 da tese registra o acesso ao repositório em 11 mar. 2026 e ao Google Drive em 12 mar. 2026.
 
@@ -27,7 +27,7 @@ Nenhum dos nomes identifica a pessoa que gravou.
 
 ## Licença e atribuição
 
-O *dataset* é distribuído sob a licença [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). As gravações desta pasta seguem a mesma licença. Ao reutilizá-las, cite:
+O README do repositório `Spira-COVID19/SPIRA-ACL2021` declara o *dataset* sob a licença [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Ao reutilizar as gravações, cite:
 
 > Casanova, E. et al. (2021). Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*, p. 625–633.
 

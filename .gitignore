@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+
+# Gravações do dataset SPIRA: não são redistribuídas neste repositório.
+# Nomes e procedência em audios/README.md; coloque os arquivos em audios/ para rodar o script.
+audios/*.wav
