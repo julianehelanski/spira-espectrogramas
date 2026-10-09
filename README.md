@@ -95,11 +95,15 @@ O script expõe as quatro etapas da cadeia de transformação do sinal acústico
 
 ---
 
-## Nota metodológica
+## Uso de inteligência artificial generativa
 
-Este script foi produzido com auxílio do modelo de linguagem Claude Sonnet 4.6 (Anthropic, 2025–2026) em sessão de trabalho conduzida em 12 de março de 2026. A interpretação analítica das imagens geradas é da pesquisadora.
+Escrevi o *script* `gerar_espectrogramas_spira.py` com o Claude, na sessão de trabalho de 12 de março de 2026, e o revisei depois com o Claude Code. O Claude Code é a interface de linha de comando da Anthropic que dá ao modelo de linguagem acesso aos arquivos do projeto, para ler, escrever e executar *scripts*. Em julho de 2026 passei as figuras para a paleta viridis com o Claude Code, e em outubro de 2026 alinhei o *script* a essas figuras e organizei as gravações em `audios/`. É minha a escolha das gravações e dos parâmetros, que seguem o padrão dos artigos do SPIRA, e a interpretação das imagens no capítulo 4. Os blocos de código reproduzidos no capítulo e o percurso desse trabalho junto ao modelo de linguagem estão descritos na tese, na subseção "Localização do *dataset* e geração dos espectrogramas" do capítulo 4.
 
-O uso do modelo de linguagem como ferramenta de pesquisa é discutido no Apêndice da dissertação ("Nota sobre o uso de modelo de linguagem como ferramenta de pesquisa"), onde a recursividade entre objeto de estudo e ferramenta metodológica é tratada como dado reflexivo do campo.
+**Modelos registrados no histórico de versões:** Claude Sonnet 4.6 (março de 2026), Claude Opus 4.8 (julho de 2026), Claude Opus 5.5 e Claude Sonnet 5.5 (outubro de 2026).
+
+**Sobre o autor `Claude` e a linha `Co-Authored-By: Claude …` nos *commits*.** Os *commits* com autor `Claude`, ou com essa linha no fim da mensagem, foram feitos em sessões do Claude Code. A marcação é gerada pela própria ferramenta e funciona como registro técnico de rastreabilidade: indica em que pontos do histórico o modelo de linguagem participou do trabalho. A autoria e a responsabilidade pelo conteúdo deste repositório são minhas. Conforme a Deliberação CONSU-A-005/2026 da Unicamp, as ferramentas de IA generativa não figuram como coautoras.
+
+A declaração formal de uso de IA generativa da tese, no modelo da Pró-Reitoria de Pós-Graduação da Unicamp, está no [Anexo 1 da tese](https://github.com/julianehelanski/tecno-etnografia-centro-ia/blob/main/ex_ane1.tex). Este texto também serve à descrição do depósito no Repositório de Dados de Pesquisa da Unicamp (REDU).
 
 ---
 
