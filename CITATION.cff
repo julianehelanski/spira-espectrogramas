@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "Geração de formas de onda e espectrogramas mel do sistema Spira"
+message: "Se você usar estes scripts ou dados, por favor cite-os."
+type: software
+abstract: "Script e figuras de formas de onda, espectrogramas mel e diagrama de convolução (capítulo 4 da tese)."
+authors:
+  - family-names: Helanski
+    given-names: Juliane
+    affiliation: "Universidade Estadual de Campinas (Unicamp), Programa de Pós-Graduação em Ciências Sociais"
+repository-code: "https://github.com/julianehelanski/spira-espectrogramas"
+references:
+  - type: thesis
+    title: "{tecnografia} de um centro de inteligência artificial: seguindo cientistas e engenheiros, universidade afora"
+    authors:
+      - family-names: Helanski
+        given-names: Juliane
+    year: 2026
+    repository-code: "https://github.com/julianehelanski/tecno-etnografia-centro-ia"
