@@ -36,7 +36,7 @@ Reproduzem o padrão descrito nos artigos do projeto SPIRA:
 
 Referências:
 
-- Casanova Gris et al. (2021). Towards a COVID-19 respiratory insufficiency detection system based on speech. *Findings of ACL-IJCNLP 2021*, p. 617–628. Disponível em: https://aclanthology.org/2021.findings-acl.55. Acesso em: 13 mar. 2026.
+- Casanova, E. et al. (2021). Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*, p. 625–633. Disponível em: https://aclanthology.org/2021.findings-acl.55. Acesso em: 13 mar. 2026.
 - Gauy et al. (2024). Discriminant analysis for respiratory insufficiency using deep learning models and transfer learning. *arXiv:2511.14939*. Disponível em: https://arxiv.org/abs/2511.14939. Acesso em: 13 mar. 2026.
 - Younesi, A. et al. (2024). A comprehensive survey of convolutions in deep learning: applications, challenges, and future trends. *arXiv:2402.15490*. Disponível em: https://arxiv.org/abs/2402.15490. Acesso em: 17 mar. 2026.
 
@@ -51,7 +51,7 @@ Referências:
 | Áudios de fala (pacientes e controles) | https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view | CC BY-SA 4.0 |
 | Ruídos de enfermaria hospitalar | https://drive.google.com/file/d/1zNwkye2FhV5LOVh3OfdqgPKzmYS7LeCM/view | CC BY-SA 4.0 |
 
-O dataset completo não está incluído neste repositório. A pasta `audios/` traz apenas as três gravações usadas nas figuras da tese, todas do dataset público: `22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` (controle usado na tese desde julho de 2026), `0a2d6271-846b-4157-a784-b5fa2d93d2f9_1.wav` (controle usado até julho de 2026) e `PTT-20200511-WA0018.wav` (paciente). Rodado na raiz sem argumentos, o script usa o controle atual e o paciente. Para outras gravações, faça o download pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
+O dataset completo não está incluído neste repositório. A pasta `audios/` traz apenas as três gravações usadas nas figuras da tese (procedência, durações e licença em [`audios/README.md`](audios/README.md)), todas do dataset público: `22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` (controle usado na tese desde julho de 2026), `0a2d6271-846b-4157-a784-b5fa2d93d2f9_1.wav` (controle usado até julho de 2026) e `PTT-20200511-WA0018.wav` (paciente). Rodado na raiz sem argumentos, o script usa o controle atual e o paciente. Para outras gravações, faça o download pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
 
 ---
 
