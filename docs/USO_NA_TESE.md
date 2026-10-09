@@ -8,22 +8,22 @@ Capítulo 4, subseção "Espectrogramas mel: a imagem da voz" (`subsec:voz_espec
 
 ## Como os dados foram usados
 
-Duas gravações do dataset público do projeto SPIRA (IME-USP/C4AI-USP; CC BY-SA 4.0), uma do grupo controle e uma do grupo paciente, são convertidas em forma de onda e em espectrograma mel (`sr` 16.000 Hz, 128 bandas mel, `fmax` 8.000 Hz, mapa de cor `magma`) por `gerar_espectrogramas_spira.py`. Os pares sem eixos e com eixos reproduzem na tese o gesto de tornar visível a cadeia de transformação do sinal acústico em inscrição circulável. Os blocos de código reproduzidos na seção foram escritos com o claude code e aparecem como listagens no capítulo 4.
+Duas gravações do dataset público do projeto SPIRA (IME-USP/C4AI-USP; CC BY-SA 4.0), uma do grupo controle e uma do grupo paciente, são convertidas em forma de onda e em espectrograma mel (`sr` 16.000 Hz, 128 bandas mel, `fmax` 8.000 Hz, mapa de cor `viridis`, forma de onda em gradiente por amplitude sobre fundo branco) por `gerar_espectrogramas_spira.py`. Os pares sem eixos e com eixos reproduzem na tese o gesto de tornar visível a cadeia de transformação do sinal acústico em inscrição circulável. Os blocos de código reproduzidos na seção foram escritos com o claude code e aparecem como listagens no capítulo 4.
 
 ## Figuras da tese que vêm deste repositório
 
 | Capítulo | Seção da tese | Rótulo | Arquivo no repositório | Script | Estado da cópia na tese |
 |---|---|---|---|---|---|
-| capítulo 4 | Seguindo Marcelo | `fig:espectrograma-paciente-dedicatoria` | `figuras/cap.4/spira_paciente_sem_legenda.png` | `gerar_espectrogramas_spira.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
-| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:waveform-controle` | `figuras/cap.4/spira_waveform_controle.png` | `gerar_espectrogramas_spira.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
-| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:waveform-paciente` | `figuras/cap.4/spira_waveform_paciente.png` | `gerar_espectrogramas_spira.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
-| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:paciente-com-eixos` | `figuras/cap.4/spira_paciente_com_eixos.png` | `gerar_espectrogramas_spira.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
-| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:paciente-sem-legenda` | `figuras/cap.4/spira_paciente_sem_legenda.png` | `gerar_espectrogramas_spira.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
-| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:comparacao-linear-log` | `figuras/cap.4/spira_comparacao_linear_log.png` | `gerar_espectrogramas_spira.py` | cópia na tese DIVERGE da do repositório (ver nota de sincronização) |
+| capítulo 4 | Seguindo Marcelo | `fig:espectrograma-paciente-dedicatoria` | `figuras/cap.4/spira_paciente_sem_legenda.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
+| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:waveform-controle` | `figuras/cap.4/spira_waveform_controle.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
+| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:espectrograma-sem-legenda` | `figuras/cap.4/spira_controle_sem_legenda.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
+| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:espectrograma-com-eixos` | `figuras/cap.4/spira_controle_com_eixos.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
+| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:waveform-paciente` | `figuras/cap.4/spira_waveform_paciente.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
+| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:paciente-com-eixos` | `figuras/cap.4/spira_paciente_com_eixos.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
+| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:paciente-sem-legenda` | `figuras/cap.4/spira_paciente_sem_legenda.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
+| capítulo 4 | Espectogramas mel: a imagem da voz | `fig:comparacao-linear-log` | `figuras/cap.4/spira_comparacao_linear_log.png` | `gerar_espectrogramas_spira.py` | cópia na tese idêntica à do repositório |
 
-As figuras `spira_espectrograma_sem_legenda.png` e `spira_espectrograma_com_eixos.png` do capítulo 4 (pasta `imagem-voz`) vêm do repositório do site da tese e não deste.
-
-Nota de sincronização. A comparação por hash entre a figura citada na tese e o arquivo homônimo deste repositório aponta divergência quando as duas cópias foram regeneradas ou ajustadas em momentos diferentes (por exemplo, padronização de cor neste repositório e correção de margens no repositório da tese, ambas em junho de 2026). Divergência de hash não indica erro: indica que a figura da tese e a do repositório precisam ser comparadas visualmente e uma delas eleita como versão de referência antes do depósito. O script `atualizar_figuras_tese.sh` (repositório da tese) copia a versão do repositório para a tese pelo nome do arquivo.
+Nota de sincronização. Em julho de 2026 as figuras do capítulo 4 passaram da paleta magma para viridis, com a forma de onda em gradiente por amplitude sobre fundo branco, e o grupo controle passou a usar a gravação `22e8506a-…_1.wav` (12,26 s) do dataset público. Essa mudança foi feita só nas imagens da tese. Em 09/10/2026 alinhei o repositório a ela: o script passou a viridis com o gradiente das listagens do capítulo, e as figuras citadas na tese foram copiadas da tese para `figuras/cap.4/` (os espectrogramas do controle com os nomes `spira_controle_*`), de modo que as cópias são idênticas. Regenerado com as mesmas gravações, o script reproduz a forma de onda pixel a pixel; os espectrogramas saem com o mesmo conteúdo e dimensões em pixels um pouco maiores. A gravação de controle `22e8506a-…_1.wav` ainda não está no repositório: a da raiz (`0a2d6271-…_1.wav`, 8,53 s) é a usada até julho de 2026.
 
 ## Dados e consentimento
 
