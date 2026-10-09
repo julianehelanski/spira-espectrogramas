@@ -1,5 +1,8 @@
 # gerar_espectrogramas_spira
 
+> **Uso na tese.** Quais figuras e tabelas da tese (capítulo 4) vêm deste repositório, com o script e os dados de origem de cada uma, estão em [`docs/USO_NA_TESE.md`](docs/USO_NA_TESE.md) (versão tabular em [`docs/uso_na_tese.csv`](docs/uso_na_tese.csv)).
+
+
 Script de geração das formas de onda, espectrogramas mel e diagrama de convolução CNN utilizados no Capítulo 4 da dissertação **"A rede que Marcelo construiu"** (Helanski, 2026), a partir de gravações do dataset público do projeto SPIRA (IME-USP / C4AI-USP).
 
 ---
