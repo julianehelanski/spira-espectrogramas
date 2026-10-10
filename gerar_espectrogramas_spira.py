@@ -1,8 +1,8 @@
 """
 gerar_espectrogramas_spira.py
 ─────────────────────────────────────────────────────────────────────────────
-Geração dos quatro espectrogramas mel utilizados no Capítulo 4 da dissertação
-"A rede que Marcelo construiu" (Helanski, 2026), a partir de gravações do
+Geração das formas de onda e dos espectrogramas mel do capítulo 4, "A rede que
+Marcelo construiu", da tese de Juliane Helanski (Unicamp, 2026), a partir de gravações do
 dataset público do projeto SPIRA (IME-USP / C4AI-USP).
 
 As figuras geradas correspondem às Figuras apresentadas na seção
@@ -585,8 +585,8 @@ def gerar_diagrama_cnn(
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Gera os espectrogramas, formas de onda e diagrama CNN do Capítulo 4 "
-            "da dissertação 'A rede que Marcelo construiu' (Helanski, 2026), "
+            "Gera os espectrogramas, formas de onda e diagrama CNN do capítulo 4 "
+            "da tese de Juliane Helanski (Unicamp, 2026), "
             "a partir de gravações do dataset público SPIRA."
         )
     )
