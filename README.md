@@ -1,6 +1,6 @@
 # Espectrogramas do Spira
 
-Este repositório guarda o *script* que gera as formas de onda e os espectrogramas mel do capítulo 4, "A rede que Marcelo construiu", da minha tese de doutorado, *{tecnografia} de um centro de inteligência artificial: seguindo cientistas e engenheiros, universidade afora* (Programa de Pós-Graduação em Ciências Sociais, IFCH, Unicamp, 2026). As imagens são feitas a partir de gravações do *dataset* público do projeto SPIRA (IME-USP/C4AI-USP), o sistema de detecção de insuficiência respiratória pela voz que acompanho no capítulo.
+Este repositório guarda o *script* que gera as formas de onda e os espectrogramas mel do capítulo 4, "A rede que Marcelo construiu", da minha tese de doutorado, *Tecnografias de um centro de inteligência artificial: seguindo cientistas e engenheiros universidade afora* (Programa de Pós-Graduação em Ciências Sociais, IFCH, Unicamp, 2026). As imagens são feitas a partir de gravações do *dataset* público do projeto SPIRA (IME-USP/C4AI-USP), o sistema de detecção de insuficiência respiratória pela voz que acompanho no capítulo.
 
 ## O que fiz
 
@@ -59,9 +59,11 @@ Os *commits* com autor `Claude`, ou com a linha `Co-Authored-By: Claude …`, fo
 
 ## Citação
 
-> HELANSKI, Juliane. *{tecnografia} de um centro de inteligência artificial*: seguindo cientistas e engenheiros, universidade afora. 2026. Tese (Doutorado em Ciências Sociais) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, 2026.
+> CARDOSO, Juliane Cristina Helanski. *Tecnografias de um centro de inteligência artificial*: seguindo cientistas e engenheiros universidade afora. Orientadora: Maria Suely Kofes. 2026. Tese (Doutorado em Ciências Sociais) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, 2026.
 
 > CASANOVA, Edresson *et al.* Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. In: *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*. [S. l.]: ACL, 2021. p. 625–633. Disponível em: https://aclanthology.org/2021.findings-acl.55.
+
+ORCID da autora: https://orcid.org/0000-0001-8649-8986.
 
 Metadados de citação em [`CITATION.cff`](CITATION.cff).
 

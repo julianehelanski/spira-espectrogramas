@@ -2,11 +2,11 @@
 gerar_espectrogramas_spira.py
 ─────────────────────────────────────────────────────────────────────────────
 Geração das formas de onda e dos espectrogramas mel do capítulo 4, "A rede que
-Marcelo construiu", da tese de Juliane Helanski (Unicamp, 2026), a partir de gravações do
+Marcelo construiu", da tese de Juliane Cristina Helanski Cardoso (Unicamp, 2026), a partir de gravações do
 dataset público do projeto SPIRA (IME-USP / C4AI-USP).
 
-As figuras geradas correspondem às Figuras apresentadas na seção
-"A imagem do som: espectrogramas como inscrições" do Capítulo 4:
+As figuras geradas são as da subseção "Espectrogramas mel: a imagem da voz"
+do capítulo 4 (o diagrama CNN não entra na tese):
 
     Fig. 1 — spira_waveform_controle.png         (grupo controle, forma de onda)
     Fig. 2 — spira_waveform_paciente.png          (grupo paciente, forma de onda)
@@ -14,19 +14,20 @@ As figuras geradas correspondem às Figuras apresentadas na seção
     Fig. 4 — spira_controle_com_eixos.png         (grupo controle, com eixos)
     Fig. 5 — spira_paciente_sem_legenda.png        (grupo paciente, sem eixos)
     Fig. 6 — spira_paciente_com_eixos.png          (grupo paciente, com eixos)
-    Fig. 7 — spira_cnn_diagrama.png               (diagrama de convolução CNN)
+    Fig. 7 — spira_cnn_diagrama.png               (diagrama de convolução CNN, fora da tese)
     Fig. 8 — spira_comparacao_linear_log.png      (comparação linear × logarítmica)
 
 Os parâmetros técnicos (sr=16000, n_mels=128, fmax=8000) reproduzem o padrão
 descrito nos artigos do projeto:
 
-    Casanova Gris et al. (2021). Towards a COVID-19 respiratory insufficiency
-    detection system based on speech. Findings of ACL-IJCNLP 2021, p. 617–628.
+    Casanova et al. (2021). Deep learning against COVID-19: respiratory
+    insufficiency detection in Brazilian Portuguese speech. Findings of the
+    Association for Computational Linguistics: ACL-IJCNLP 2021, p. 625–633.
     https://aclanthology.org/2021.findings-acl.55
 
-    Gauy et al. (2024). Discriminant analysis for respiratory insufficiency
-    using deep learning models and transfer learning.
-    arXiv:2511.14939. https://arxiv.org/abs/2511.14939
+    Gauy et al. (2024). Discriminant audio properties in deep learning based
+    respiratory insufficiency detection in Brazilian Portuguese. LREC-COLING 2024.
+    arXiv:2405.17569. https://arxiv.org/abs/2405.17569
 
 ─────────────────────────────────────────────────────────────────────────────
 Dataset público SPIRA
@@ -586,7 +587,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
             "Gera os espectrogramas, formas de onda e diagrama CNN do capítulo 4 "
-            "da tese de Juliane Helanski (Unicamp, 2026), "
+            "da tese de Juliane Cristina Helanski Cardoso (Unicamp, 2026), "
             "a partir de gravações do dataset público SPIRA."
         )
     )
