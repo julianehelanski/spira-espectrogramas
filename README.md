@@ -69,4 +69,4 @@ Metadados de citação em [`CITATION.cff`](CITATION.cff).
 
 ## Licença
 
-Código sob licença MIT. As gravações do SPIRA seguem a licença CC BY-SA 4.0 do *dataset*.
+Código sob licença [MIT](LICENSE). As figuras derivam de gravações do *dataset* SPIRA (CC BY-SA 4.0) e por isso estão sob [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br), conforme [`LICENSE-DADOS.md`](LICENSE-DADOS.md).
