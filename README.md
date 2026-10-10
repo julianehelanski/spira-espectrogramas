@@ -1,124 +1,70 @@
-# gerar_espectrogramas_spira
+# Espectrogramas do Spira
 
-> **Uso na tese.** Quais figuras e tabelas da tese (capítulo 4) vêm deste repositório, com o script e os dados de origem de cada uma, estão em [`docs/USO_NA_TESE.md`](docs/USO_NA_TESE.md) (versão tabular em [`docs/uso_na_tese.csv`](docs/uso_na_tese.csv)).
+Este repositório guarda o *script* que gera as formas de onda e os espectrogramas mel do capítulo 4, "A rede que Marcelo construiu", da minha tese de doutorado, *{tecnografia} de um centro de inteligência artificial: seguindo cientistas e engenheiros, universidade afora* (Programa de Pós-Graduação em Ciências Sociais, IFCH, Unicamp, 2026). As imagens são feitas a partir de gravações do *dataset* público do projeto SPIRA (IME-USP/C4AI-USP), o sistema de detecção de insuficiência respiratória pela voz que acompanho no capítulo.
 
+## O que fiz
 
-Script de geração das formas de onda, espectrogramas mel e diagrama de convolução CNN utilizados no Capítulo 4 da dissertação **"A rede que Marcelo construiu"** (Helanski, 2026), a partir de gravações do dataset público do projeto SPIRA (IME-USP / C4AI-USP).
+Escrevi `gerar_espectrogramas_spira.py` para refazer, sobre gravações do próprio *dataset* do SPIRA, a cadeia de transformação que o sistema opera sobre a voz: do sinal acústico à forma de onda, da forma de onda ao espectrograma mel e do espectrograma à varredura de uma rede neural convolucional. Usei os parâmetros descritos nos artigos do projeto (taxa de amostragem de 16.000 Hz, 128 bandas mel, frequência máxima de 8.000 Hz) e o mapa de cor `viridis`. O *script* produz cada espectrograma em dois estados, sem eixos e com eixos (tempo em segundos, frequência em mel, amplitude em dB), para tornar visível o momento em que a imagem do som ganha coordenadas e passa a circular como inscrição.
 
----
+Escolhi duas gravações: uma do grupo controle (`22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav`, 12,26 s) e uma do grupo paciente (`PTT-20200511-WA0018.wav`, 10,48 s).
 
-## Figuras geradas
+## O que entra na tese
 
-| Arquivo | Descrição |
+No capítulo 4, subseção "Espectrogramas mel: a imagem da voz", e na abertura da seção "Seguindo Marcelo", entram sete imagens (oito figuras, porque o espectrograma do paciente sem eixos aparece duas vezes), todas em `figuras/cap.4/`:
+
+| Arquivo | Figura |
 |---|---|
-| `spira_waveform_controle.png` | Forma de onda bruta — grupo controle, sem eixos |
-| `spira_waveform_paciente.png` | Forma de onda bruta — grupo paciente, sem eixos |
-| `spira_controle_sem_legenda.png` | Espectrograma mel — grupo controle, sem eixos |
-| `spira_controle_com_eixos.png` | Espectrograma mel — grupo controle, com eixos e barra de cor |
-| `spira_paciente_sem_legenda.png` | Espectrograma mel — grupo paciente, sem eixos |
-| `spira_paciente_com_eixos.png` | Espectrograma mel — grupo paciente, com eixos e barra de cor |
-| `spira_cnn_diagrama.png` | Diagrama de convolução CNN — espectrograma mel do paciente, filtro 3×3 e mapa de ativação |
+| `spira_waveform_controle.png` | forma de onda, grupo controle |
+| `spira_waveform_paciente.png` | forma de onda, grupo paciente |
+| `spira_controle_sem_legenda.png` | espectrograma mel, controle, sem eixos |
+| `spira_controle_com_eixos.png` | espectrograma mel, controle, com eixos e barra de cor |
+| `spira_paciente_sem_legenda.png` | espectrograma mel, paciente, sem eixos (também na abertura da seção "Seguindo Marcelo") |
+| `spira_paciente_com_eixos.png` | espectrograma mel, paciente, com eixos e barra de cor |
+| `spira_comparacao_linear_log.png` | comparação entre as escalas linear e logarítmica de frequência |
 
-Os pares sem eixos / com eixos reproduzem o gesto analítico de tornar visível a cadeia de transformação do sinal acústico em inscrição circulável, nos termos de Latour (2001). O diagrama CNN torna visível a operação que o algoritmo realiza sobre essa inscrição: a varredura do filtro convolucional sobre a imagem do som.
+O *script* gera também `spira_cnn_diagrama.png` (espectrograma do paciente, filtro convolucional 3×3 e mapa de ativação), que não entra na tese. Os blocos de código reproduzidos no capítulo vêm deste *script*. A correspondência figura a figura está em [`docs/USO_NA_TESE.md`](docs/USO_NA_TESE.md) (versão tabular em [`docs/uso_na_tese.csv`](docs/uso_na_tese.csv)).
 
----
+## Dados
 
-## Parâmetros técnicos
+As gravações não são distribuídas aqui. Pertencem ao *dataset* público do SPIRA, sob licença CC BY-SA 4.0, e a procedência, a duração e a forma de obtenção de cada uma estão em [`audios/README.md`](audios/README.md).
 
-Reproduzem o padrão descrito nos artigos do projeto SPIRA:
-
-| Parâmetro | Valor |
+| Recurso | Endereço |
 |---|---|
-| Taxa de amostragem (`sr`) | 16.000 Hz |
-| Coeficientes Mel (`n_mels`) | 128 |
-| Frequência máxima (`fmax`) | 8.000 Hz |
-| Colormap | `viridis` (forma de onda em gradiente por amplitude, fundo branco; até jul. 2026, `magma`) |
+| Repositório do projeto (código e *dataset*, ACL 2021) | https://github.com/SPIRA-COVID19/SPIRA-ACL2021 |
+| Áudios de fala (pacientes e controles) | https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view |
 
-Referências:
-
-- Casanova, E. et al. (2021). Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*, p. 625–633. Disponível em: https://aclanthology.org/2021.findings-acl.55. Acesso em: 13 mar. 2026.
-- Gauy et al. (2024). Discriminant analysis for respiratory insufficiency using deep learning models and transfer learning. *arXiv:2511.14939*. Disponível em: https://arxiv.org/abs/2511.14939. Acesso em: 13 mar. 2026.
-- Younesi, A. et al. (2024). A comprehensive survey of convolutions in deep learning: applications, challenges, and future trends. *arXiv:2402.15490*. Disponível em: https://arxiv.org/abs/2402.15490. Acesso em: 17 mar. 2026.
-
----
-
-## Dataset público SPIRA
-
-| Recurso | URL | Licença |
-|---|---|---|
-| Repositório principal (código e dataset, ACL 2021) | https://github.com/SPIRA-COVID19/SPIRA-ACL2021 | CC BY-SA 4.0 |
-| Organização geral do projeto | https://github.com/spirabr | — |
-| Áudios de fala (pacientes e controles) | https://drive.google.com/file/d/1Bv0d3uwBB-52MBmtN2A_qNoaBIxUkN9y/view | CC BY-SA 4.0 |
-| Ruídos de enfermaria hospitalar | https://drive.google.com/file/d/1zNwkye2FhV5LOVh3OfdqgPKzmYS7LeCM/view | CC BY-SA 4.0 |
-
-O dataset completo não está incluído neste repositório. As gravações também não são distribuídas aqui. A pasta `audios/` registra, em [`audios/README.md`](audios/README.md), os nomes, a procedência, as durações e a licença das três gravações usadas nas figuras da tese, todas do dataset público: `22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` (controle usado na tese desde julho de 2026), `0a2d6271-846b-4157-a784-b5fa2d93d2f9_1.wav` (controle usado até julho de 2026) e `PTT-20200511-WA0018.wav` (paciente). Depois de baixá-las e colocá-las em `audios/`, o script, rodado na raiz sem argumentos, usa o controle atual e o paciente. Para outras gravações, faça o download pelos links acima e informe os caminhos via argumentos de linha de comando (ver seção Uso).
-
----
-
-## Instalação
+## Como reproduzir
 
 ```bash
-pip install -r requirements.txt
-```
+pip install -r requirements.txt      # Python 3.10+, librosa, matplotlib, numpy, scipy
 
-Versões mínimas testadas: Python 3.10, librosa 0.10, matplotlib 3.7, numpy 1.24, scipy 1.10.
+# com as duas gravações em audios/, gera todas as figuras
+python gerar_espectrogramas_spira.py --saida figuras/cap.4/
 
----
+# com outras gravações
+python gerar_espectrogramas_spira.py --controle caminho/controle.wav \
+    --paciente caminho/paciente.wav --saida figuras/cap.4/
 
-## Uso
-
-```bash
-# gera todas as figuras (formas de onda, espectrogramas e diagrama CNN)
-python gerar_espectrogramas_spira.py \
-    --controle caminho/para/controle.wav \
-    --paciente caminho/para/PTT-20200511-WA0018.wav \
-    --saida    figuras/cap.4/
-```
-
-```bash
-# gera apenas o diagrama CNN, com espectrograma simulado (sem arquivos .wav)
+# apenas o diagrama CNN, com espectrograma simulado (sem .wav)
 python gerar_espectrogramas_spira.py --apenas-cnn --saida figuras/cap.4/
 ```
 
-Se os argumentos forem omitidos, o script busca os arquivos com os nomes padrão `audios/22e8506a-9916-49b9-ac5d-21b397276e4a_1.wav` e `audios/PTT-20200511-WA0018.wav` (caminhos relativos à raiz do repositório), e salva as figuras no diretório corrente.
-
----
-
-## Cadeia de transformação
-
-O script expõe as quatro etapas da cadeia de transformação do sinal acústico em inscrição e classificação:
-
-1. **Forma de onda** (`salvar_waveform`): o sinal bruto como sequência de amostras de pressão do ar. Polo mais material da cadeia, antes de qualquer decomposição espectral.
-2. **Espectrograma mel sem eixos** (`salvar_sem_eixos`): a matriz bidimensional 128 × T visualizada como textura espectral, antes da nomeação das coordenadas.
-3. **Espectrograma mel com eixos** (`salvar_com_eixos`): o mesmo objeto com tempo (s), frequência (Mel) e amplitude (dB) nomeados, no estado em que pode circular entre laboratórios.
-4. **Diagrama CNN** (`gerar_diagrama_cnn`): três painéis em sequência — espectrograma mel do paciente com a janela do filtro 3×3 demarcada sobre uma região de pausa respiratória; filtro com pesos aprendidos; mapa de ativação resultante, com as regiões de pausa destacadas. Quando um arquivo `.wav` de paciente é fornecido, as pausas são detectadas automaticamente a partir da energia espectral no interior da fala (excluídos os 15 primeiros e últimos frames), selecionando os três centros de grupo com menor energia. Quando nenhum arquivo é fornecido (`--apenas-cnn`), o espectrograma é simulado com os parâmetros técnicos do projeto.
-
----
-
 ## Uso de inteligência artificial generativa
 
-Escrevi o *script* `gerar_espectrogramas_spira.py` com o Claude, na sessão de trabalho de 12 de março de 2026, e o revisei depois com o Claude Code. O Claude Code é a interface de linha de comando da Anthropic que dá ao modelo de linguagem acesso aos arquivos do projeto, para ler, escrever e executar *scripts*. Em julho de 2026 passei as figuras para a paleta viridis com o Claude Code, e em outubro de 2026 alinhei o *script* a essas figuras e organizei as gravações em `audios/`. É minha a escolha das gravações e dos parâmetros, que seguem o padrão dos artigos do SPIRA, e a interpretação das imagens no capítulo 4. Os blocos de código reproduzidos no capítulo e o percurso desse trabalho junto ao modelo de linguagem estão descritos na tese, na subseção "Localização do *dataset* e geração dos espectrogramas" do capítulo 4.
+Escrevi o *script* com o Claude e o revisei com o Claude Code. O Claude Code é a interface de linha de comando da Anthropic que dá ao modelo de linguagem acesso aos arquivos do projeto, para ler, escrever e executar *scripts*. São minhas a escolha das gravações e dos parâmetros e a interpretação das imagens no capítulo 4, onde descrevo também o percurso desse trabalho com o modelo de linguagem (subseção "Localização do *dataset* e geração dos espectrogramas").
 
-**Modelos registrados no histórico de versões:** Claude Sonnet 4.6 (março de 2026), Claude Opus 4.8 (julho de 2026), Claude Opus 5.5 e Claude Sonnet 5.5 (outubro de 2026).
+**Modelos registrados no histórico de versões:** Claude Sonnet 4.6, Claude Opus 4.8, Claude Opus 5.5 e Claude Sonnet 5.5 (março a outubro de 2026).
 
-**Sobre o autor `Claude` e a linha `Co-Authored-By: Claude …` nos *commits*.** Os *commits* com autor `Claude`, ou com essa linha no fim da mensagem, foram feitos em sessões do Claude Code. A marcação é gerada pela própria ferramenta e funciona como registro técnico de rastreabilidade: indica em que pontos do histórico o modelo de linguagem participou do trabalho. A autoria e a responsabilidade pelo conteúdo deste repositório são minhas. Conforme a Deliberação CONSU-A-005/2026 da Unicamp, as ferramentas de IA generativa não figuram como coautoras.
-
-A declaração formal de uso de IA generativa da tese, no modelo da Pró-Reitoria de Pós-Graduação da Unicamp, está no [Anexo 1 da tese](https://github.com/julianehelanski/tecno-etnografia-centro-ia/blob/main/ex_ane1.tex). Este texto também serve à descrição do depósito no Repositório de Dados de Pesquisa da Unicamp (REDU).
-
----
+Os *commits* com autor `Claude`, ou com a linha `Co-Authored-By: Claude …`, foram feitos em sessões do Claude Code; a marcação é gerada pela ferramenta e registra em que pontos do histórico o modelo participou do trabalho. A autoria e a responsabilidade pelo conteúdo são minhas e, conforme a Deliberação CONSU-A-005/2026 da Unicamp, as ferramentas de IA generativa não figuram como coautoras. A declaração formal de uso de IA generativa da tese está no [Anexo 1](https://github.com/julianehelanski/tecno-etnografia-centro-ia/blob/main/ex_ane1.tex).
 
 ## Citação
 
-Se este script for utilizado em trabalhos acadêmicos, cite a dissertação de origem:
+> HELANSKI, Juliane. *{tecnografia} de um centro de inteligência artificial*: seguindo cientistas e engenheiros, universidade afora. 2026. Tese (Doutorado em Ciências Sociais) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, 2026.
 
-> HELANSKI, Juliane. *A rede que Marcelo construiu*: etnografia do projeto SPIRA e do Centro de Inteligência Artificial da USP. Tese (Doutorado) — [Programa de Pós-Graduação], Universidade Estadual de Campinas, 2026.
+> CASANOVA, Edresson *et al.* Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. In: *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*. [S. l.]: ACL, 2021. p. 625–633. Disponível em: https://aclanthology.org/2021.findings-acl.55.
 
-e o dataset público do SPIRA:
-
-> CASANOVA GRIS, Edresson et al. Towards a COVID-19 respiratory insufficiency detection system based on speech. In: *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*. Stroudsburg: ACL, 2021. p. 617–628.
-
----
+Metadados de citação em [`CITATION.cff`](CITATION.cff).
 
 ## Licença
 
-O código deste repositório é disponibilizado sob licença MIT. As gravações do dataset SPIRA estão sob licença CC BY-SA 4.0 (ver links acima).
+Código sob licença MIT. As gravações do SPIRA seguem a licença CC BY-SA 4.0 do *dataset*.
