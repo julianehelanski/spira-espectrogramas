@@ -61,7 +61,7 @@ Os *commits* com autor `Claude`, ou com a linha `Co-Authored-By: Claude …`, fo
 
 > CARDOSO, Juliane Cristina Helanski. *Tecnografias de um centro de inteligência artificial*: seguindo cientistas e engenheiros universidade afora. Orientadora: Maria Suely Kofes. 2026. Tese (Doutorado em Ciências Sociais) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, 2026.
 
-> CASANOVA, Edresson *et al.* Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. In: *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*. [S. l.]: ACL, 2021. p. 625–633. Disponível em: https://aclanthology.org/2021.findings-acl.55.
+> CASANOVA, Edresson; GRIS, Lucas; CAMARGO, Augusto; SILVA, Daniel da; GAZZOLA, Murilo; SABINO, Ester; LEVIN, Anna S.; CANDIDO JUNIOR, Arnaldo; ALUISIO, Sandra; FINGER, Marcelo. Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. In: *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*. [S. l.]: Association for Computational Linguistics, 2021. p. 625–633. DOI: https://doi.org/10.18653/v1/2021.findings-acl.55.
 
 ORCID da autora: https://orcid.org/0000-0001-8649-8986.
 

@@ -29,7 +29,7 @@ Nenhum dos nomes identifica a pessoa que gravou.
 
 O README do repositório `Spira-COVID19/SPIRA-ACL2021` declara o *dataset* sob a licença [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Ao reutilizar as gravações, cite:
 
-> Casanova, E. et al. (2021). Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*, p. 625–633.
+> CASANOVA, Edresson; GRIS, Lucas; CAMARGO, Augusto; SILVA, Daniel da; GAZZOLA, Murilo; SABINO, Ester; LEVIN, Anna S.; CANDIDO JUNIOR, Arnaldo; ALUISIO, Sandra; FINGER, Marcelo. Deep learning against COVID-19: respiratory insufficiency detection in Brazilian Portuguese speech. In: *Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021*. [S. l.]: Association for Computational Linguistics, 2021. p. 625–633. DOI: https://doi.org/10.18653/v1/2021.findings-acl.55.
 
 ## Uso
 
