@@ -20,14 +20,23 @@ do capítulo 4 (o diagrama CNN não entra na tese):
 Os parâmetros técnicos (sr=16000, n_mels=128, fmax=8000) reproduzem o padrão
 descrito nos artigos do projeto:
 
-    Casanova et al. (2021). Deep learning against COVID-19: respiratory
-    insufficiency detection in Brazilian Portuguese speech. Findings of the
-    Association for Computational Linguistics: ACL-IJCNLP 2021, p. 625–633.
-    https://aclanthology.org/2021.findings-acl.55
+    CASANOVA, Edresson; GRIS, Lucas; CAMARGO, Augusto; SILVA, Daniel da;
+    GAZZOLA, Murilo; SABINO, Ester; LEVIN, Anna S.; CANDIDO JUNIOR, Arnaldo;
+    ALUISIO, Sandra; FINGER, Marcelo. Deep learning against COVID-19:
+    respiratory insufficiency detection in Brazilian Portuguese speech. In:
+    Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021.
+    [S. l.]: Association for Computational Linguistics, 2021. p. 625-633.
+    DOI: https://doi.org/10.18653/v1/2021.findings-acl.55.
 
-    Gauy et al. (2024). Discriminant audio properties in deep learning based
-    respiratory insufficiency detection in Brazilian Portuguese. LREC-COLING 2024.
-    arXiv:2405.17569. https://arxiv.org/abs/2405.17569
+    GAUY, Marcelo Matheus; BERTI, Larissa Cristina; CANDIDO JUNIOR, Arnaldo;
+    CAMARGO NETO, Augusto; GOLDMAN, Alfredo; LEVIN, Anna Sara Shafferman;
+    MARTINS, Marcus; MEDEIROS, Beatriz Raposo de; QUEIROZ, Marcelo; SABINO,
+    Ester Cerdeira; SVARTMAN, Flaviane Romani Fernandes; FINGER, Marcelo.
+    Discriminant audio properties in deep learning based respiratory
+    insufficiency detection in Brazilian Portuguese. In: Artificial
+    Intelligence in Medicine (AIME 2023). Cham: Springer, 2023. (Lecture Notes
+    in Computer Science, v. 13897). p. 271-275. Versão em arXiv:2405.17569,
+    https://arxiv.org/abs/2405.17569
 
 ─────────────────────────────────────────────────────────────────────────────
 Dataset público SPIRA
